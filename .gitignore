@@ -47,3 +47,6 @@
 /contrib/ports/win32/mingw/*.map
 /contrib/ports/win32/mingw/cov-int
 /contrib/ports/win32/msvc/.vs
+
+# -- by h1994st
+/contrib/ports/unix/preload_lib/build
