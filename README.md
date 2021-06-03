@@ -73,3 +73,9 @@ status_callback==UP, local interface IP is 192.168.1.200
 ```
 
 Then, open the browser and enter [192.168.1.200](http://192.168.1.200)
+
+## Run `ipsec_app`
+
+```bash
+bash test_ipsec.sh
+```
