@@ -83,7 +83,7 @@ extern "C" {
 #endif
 
 /* IPSec adds a maximum of 24B assuming 96-bit ICV (12B AH header + 12B ICV) */
-#ifdef EIPS
+#if EIPS
 #include "ipsec/ipsec.h"
 #define PBUF_IPSEC_HLEN     IPSEC_MAX_ESP_HLEN /* ESP requires the most possible space for IPSec */
 #else

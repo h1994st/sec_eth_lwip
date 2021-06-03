@@ -7,7 +7,7 @@ project(lwIP)
 # Example lwIP application
 set (LWIP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
-set (LWIP_DEFINITIONS LWIP_DEBUG=1 IPSEC_TRACE IPSEC_DEBUG IPSEC_MESSAGE IPSEC_AUDIT)
+set (LWIP_DEFINITIONS LWIP_DEBUG=1)
 
 if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
   add_subdirectory(${LWIP_DIR}/contrib/ports/win32/example_app)

@@ -4,7 +4,7 @@
 #include "lwip/opt.h"
 #include "ipsec/sa.h"
 
-#ifdef DUMMY_LOOPBACK_SA_SP
+#if DUMMY_LOOPBACK_SA_SP
 extern sad_entry dummy_loop_sa;
 extern spd_entry dummy_loop_sp;
 #endif /* DUMMY_LOOPBACK_SA_SP */

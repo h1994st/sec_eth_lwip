@@ -140,7 +140,7 @@ PPPFILES=$(LWIPDIR)/netif/ppp/auth.c \
 	$(LWIPDIR)/netif/ppp/polarssl/sha1.c
 
 # LWIPNOAPPSFILES: All LWIP files without apps
-LWIPNOAPPSFILES=$(COREFILES) \
+LWIPFILES=$(COREFILES) \
 	$(CORE4FILES) \
 	$(CORE6FILES) \
 	$(APIFILES) \

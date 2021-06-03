@@ -40,14 +40,14 @@ CC=gcc
 AR=ar
 
 LWIPDIR=../src
-BUILDDIR="../build/contrib/ports/unix/example_app"
+LWIPARCH=unix/port
 APPLIB=libapps.a
 LWIPLIB=liblwip.a
 
 ################################################################################
 # Define program flags #########################################################
 ################################################################################
-LDFLAGS+=-lutil -pthread -lrt -lpcap -L$(BUILDDIR) -llwipcore
+LDFLAGS+=-lutil -pthread -lrt -lpcap
 ARFLAGS=rs
 
 # gcc warnings
@@ -79,7 +79,6 @@ APPFILES=src/eips_test.c \
 include $(LWIPDIR)/Filelists.mk
 
 # Architecture specific files.
-LWIPARCH=unix/port
 SYSARCH=$(LWIPARCH)/sys_arch.c
 ARCHFILES=$(LWIPARCH)/perf.c \
 	$(SYSARCH) \

@@ -78,7 +78,7 @@
 #include "util/pcap.h"
 #endif /* PCAP_DBG_FLAG */
 
-#ifdef EIPS
+#if EIPS
 #include "ipsec/ipsecdev.h"
 #endif /* EIPS */
 
@@ -193,7 +193,7 @@ netif_loopif_init(struct netif *netif)
   pcap_dump_add(&loop_netif, PCAP_DBG_FILE);
   #endif /* PCAP_DBG_FLAG */
 
-  #ifdef EIPS
+  #if EIPS
   ipsecdev_add(&loop_netif);
   #endif /* EIPS */
 
@@ -1323,7 +1323,7 @@ netif_poll(struct netif *netif)
     MIB2_STATS_NETIF_ADD(stats_if, ifinoctets, in->tot_len);
     MIB2_STATS_NETIF_INC(stats_if, ifinucastpkts);
 
-    #ifdef EIPS
+    #if EIPS
     if (netif->input(in, netif) != ERR_OK) {
       pbuf_free(in);
     }

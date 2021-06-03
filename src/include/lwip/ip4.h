@@ -48,7 +48,7 @@
 #include "lwip/netif.h"
 #include "lwip/prot/ip4.h"
 
-#ifdef EIPS
+#if EIPS
 #include "ipsec/config.h"
 #endif /* EIPS */
 

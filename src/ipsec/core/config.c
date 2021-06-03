@@ -3,7 +3,7 @@
 /* -------- put statically initialized SA/SP entries and tables here -------- */
 spd_entry outbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     /*           src          src mask    dst         dst mask    inner packet protocol   src port    dst port    IPSec processing flag   SPI */
-    #ifdef DUMMY_LOOPBACK_SA_SP
+    #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
@@ -13,7 +13,7 @@ spd_entry outbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
 };
 spd_entry inbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     /*           src          src mask    dst         dst mask    inner packet protocol   src port    dst port    IPSec processing flag   SPI */
-    #ifdef DUMMY_LOOPBACK_SA_SP
+    #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
@@ -23,7 +23,7 @@ spd_entry inbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
 };
 
 sad_entry outbound_sad[IPSEC_MAX_SAD_ENTRIES] = {
-    #ifdef DUMMY_LOOPBACK_SA_SP
+    #if DUMMY_LOOPBACK_SA_SP
     { SAD_ENTRY(
         127,0,0,1,              /* destination address          */
         0,0,0,0,                /* destination network mask     */
@@ -42,7 +42,7 @@ sad_entry outbound_sad[IPSEC_MAX_SAD_ENTRIES] = {
     */
 };
 sad_entry inbound_sad[IPSEC_MAX_SAD_ENTRIES] = {
-    #ifdef DUMMY_LOOPBACK_SA_SP
+    #if DUMMY_LOOPBACK_SA_SP
     { SAD_ENTRY(
         127,0,0,1,              /* destination address          */
         0,0,0,0,                /* destination network mask     */
@@ -85,7 +85,7 @@ void sa_sp_db_init(void) {
 
     db = ipsec_spd_load_dbs(&inbound_spd[0], &outbound_spd[0], &inbound_sad[0], &outbound_sad[0]);
 
-    #ifdef DUMMY_LOOPBACK_SA_SP
+    #if DUMMY_LOOPBACK_SA_SP
     ipsec_spd_add_sa(&(db->inbound_spd.table[0]), &(db->inbound_sad.table[0]));
     ipsec_spd_add_sa(&(db->outbound_spd.table[0]), &(db->outbound_sad.table[0]));
     #endif /* DUMMY_LOOPBACK_SA_SP */
