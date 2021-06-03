@@ -63,7 +63,8 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
             spd = ipsec_spd_lookup(pkt, &db->inbound_spd) ;
             if (spd == NULL) {
                 IPSEC_LOG_ERR("ipsecdev_input", IPSEC_STATUS_NO_POLICY_FOUND, ("no matching SPD policy found")) ;
-                pbuf_free(p) ;
+                data->orig_input(p, inp);
+                /*pbuf_free(p);*/
             } else {
                 switch(spd->policy) {
                     case POLICY_APPLY:
