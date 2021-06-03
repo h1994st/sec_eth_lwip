@@ -61,6 +61,10 @@
 #include "netif/ppp/ppp_opts.h"
 #include "netif/ppp/ppp_impl.h"
 
+#ifdef EIPS
+#include "ipsec/config.h"
+#endif /* EIPS */
+
 #ifndef LWIP_SKIP_PACKING_CHECK
 
 #ifdef PACK_STRUCT_USE_INCLUDES
@@ -346,6 +350,10 @@ lwip_init(void)
 #ifndef LWIP_SKIP_PACKING_CHECK
   LWIP_ASSERT("Struct packing not implemented correctly. Check your lwIP port.", sizeof(struct packed_struct_test) == PACKED_STRUCT_TEST_EXPECTED_SIZE);
 #endif
+
+#ifdef EIPS
+  sa_sp_db_init();
+#endif /* EIPS */
 
   /* Modules initialization */
   stats_init();

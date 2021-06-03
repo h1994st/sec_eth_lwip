@@ -49,7 +49,20 @@ COREFILES=$(LWIPDIR)/core/init.c \
 	$(LWIPDIR)/core/tcp_in.c \
 	$(LWIPDIR)/core/tcp_out.c \
 	$(LWIPDIR)/core/timeouts.c \
-	$(LWIPDIR)/core/udp.c
+	$(LWIPDIR)/core/udp.c \
+	$(LWIPDIR)/core/util/pcap.c
+
+# IPSECFILES: IPSec protocol files
+IPSECFILES=$(LWIPDIR)/ipsec/core/ah.c \
+	$(LWIPDIR)/ipsec/core/ipsec_des.c \
+	$(LWIPDIR)/ipsec/core/esp.c \
+	$(LWIPDIR)/ipsec/core/ipsec.c \
+	$(LWIPDIR)/ipsec/core/ipsec_md5.c \
+	$(LWIPDIR)/ipsec/core/sa.c \
+	$(LWIPDIR)/ipsec/core/ipsec_sha1.c \
+	$(LWIPDIR)/ipsec/core/util.c \
+	$(LWIPDIR)/ipsec/core/config.c \
+	$(LWIPDIR)/ipsec/core/ipsecdev.c
 
 CORE4FILES=$(LWIPDIR)/core/ipv4/acd.c \
 	$(LWIPDIR)/core/ipv4/autoip.c \
@@ -133,7 +146,8 @@ LWIPNOAPPSFILES=$(COREFILES) \
 	$(APIFILES) \
 	$(NETIFFILES) \
 	$(PPPFILES) \
-	$(SIXLOWPAN)
+	$(SIXLOWPAN) \
+	$(IPSECFILES)
 
 # SNMPFILES: SNMPv2c agent
 SNMPFILES=$(LWIPDIR)/apps/snmp/snmp_asn1.c \
@@ -205,4 +219,5 @@ LWIPAPPFILES=$(SNMPFILES) \
 	$(NETBIOSNSFILES) \
 	$(TFTPFILES) \
 	$(MQTTFILES) \
-	$(MBEDTLS_FILES)
+	$(MBEDTLS_FILES) \
+	$(IPSECFILES)

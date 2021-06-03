@@ -837,6 +837,7 @@ mem_malloc(mem_size_t size_in)
 #endif /* LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT */
   LWIP_MEM_ALLOC_DECL_PROTECT();
 
+  printf("mem size %d\n", size_in);
   if (size_in == 0) {
     return NULL;
   }
@@ -848,6 +849,7 @@ mem_malloc(mem_size_t size_in)
     /* every data block must be at least MIN_SIZE_ALIGNED long */
     size = MIN_SIZE_ALIGNED;
   }
+  printf("mem size %d\n", size);
 #if MEM_OVERFLOW_CHECK
   size += MEM_SANITY_REGION_BEFORE_ALIGNED + MEM_SANITY_REGION_AFTER_ALIGNED;
 #endif
@@ -887,6 +889,7 @@ mem_malloc(mem_size_t size_in)
           (mem->next - (ptr + SIZEOF_STRUCT_MEM)) >= size) {
         /* mem is not used and at least perfect fit is possible:
          * mem->next - (ptr + SIZEOF_STRUCT_MEM) gives us the 'user data size' of mem */
+        printf("mem test 1\n");
 
         if (mem->next - (ptr + SIZEOF_STRUCT_MEM) >= (size + SIZEOF_STRUCT_MEM + MIN_SIZE_ALIGNED)) {
           /* (in addition to the above, we test if another struct mem (SIZEOF_STRUCT_MEM) containing
@@ -899,6 +902,7 @@ mem_malloc(mem_size_t size_in)
            *       region that couldn't hold data, but when mem->next gets freed,
            *       the 2 regions would be combined, resulting in more free memory
            */
+          printf("mem test 2\n");
           ptr2 = (mem_size_t)(ptr + SIZEOF_STRUCT_MEM + size);
           LWIP_ASSERT("invalid next ptr",ptr2 != MEM_SIZE_ALIGNED);
           /* create mem2 struct */
@@ -930,6 +934,7 @@ mem_malloc_adjust_lfree:
 #endif /* LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT */
         if (mem == lfree) {
           struct mem *cur = lfree;
+          printf("mem test 3\n");
           /* Find next free block after mem and update lowest free pointer */
           while (cur->used && cur != ram_end) {
 #if LWIP_ALLOW_MEM_FREE_FROM_OTHER_CONTEXT
@@ -948,10 +953,12 @@ mem_malloc_adjust_lfree:
           lfree = cur;
           LWIP_ASSERT("mem_malloc: !lfree->used", ((lfree == ram_end) || (!lfree->used)));
         }
+        printf("mem test 4\n");
         LWIP_MEM_ALLOC_UNPROTECT();
         sys_mutex_unlock(&mem_mutex);
         LWIP_ASSERT("mem_malloc: allocated memory not above ram_end.",
                     (mem_ptr_t)mem + SIZEOF_STRUCT_MEM + size <= (mem_ptr_t)ram_end);
+        printf("%lu %lu %u\n", (mem_ptr_t)mem, SIZEOF_STRUCT_MEM, MEM_ALIGNMENT);
         LWIP_ASSERT("mem_malloc: allocated memory properly aligned.",
                     ((mem_ptr_t)mem + SIZEOF_STRUCT_MEM) % MEM_ALIGNMENT == 0);
         LWIP_ASSERT("mem_malloc: sanity check alignment",

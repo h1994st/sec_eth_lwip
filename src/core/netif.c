@@ -74,6 +74,14 @@
 
 #include "netif/ethernet.h"
 
+#ifdef PCAP_DBG_FLAG
+#include "util/pcap.h"
+#endif /* PCAP_DBG_FLAG */
+
+#ifdef EIPS
+#include "ipsec/ipsecdev.h"
+#endif /* EIPS */
+
 #if LWIP_AUTOIP
 #include "lwip/autoip.h"
 #endif /* LWIP_AUTOIP */
@@ -180,6 +188,15 @@ netif_loopif_init(struct netif *netif)
   netif_set_flags(netif, NETIF_FLAG_IGMP);
 #endif
   NETIF_SET_CHECKSUM_CTRL(netif, NETIF_CHECKSUM_DISABLE_ALL);
+
+  #ifdef PCAP_DBG_FLAG
+  pcap_dump_add(&loop_netif, PCAP_DBG_FILE);
+  #endif /* PCAP_DBG_FLAG */
+
+  #ifdef EIPS
+  ipsecdev_add(&loop_netif);
+  #endif /* EIPS */
+
   return ERR_OK;
 }
 #endif /* LWIP_HAVE_LOOPIF */
@@ -1105,11 +1122,11 @@ netif_set_link_callback(struct netif *netif, netif_status_callback_fn link_callb
 /**
  * @ingroup netif
  * Send an IP packet to be received on the same netif (loopif-like).
- * The pbuf is copied and added to an internal queue which is fed to 
+ * The pbuf is copied and added to an internal queue which is fed to
  * netif->input by netif_poll().
  * In multithreaded mode, the call to netif_poll() is queued to be done on the
  * TCP/IP thread.
- * In callback mode, the user has the responsibility to call netif_poll() in 
+ * In callback mode, the user has the responsibility to call netif_poll() in
  * the main loop of their application.
  *
  * @param netif the lwip network interface structure
@@ -1305,10 +1322,18 @@ netif_poll(struct netif *netif)
     LINK_STATS_INC(link.recv);
     MIB2_STATS_NETIF_ADD(stats_if, ifinoctets, in->tot_len);
     MIB2_STATS_NETIF_INC(stats_if, ifinucastpkts);
+
+    #ifdef EIPS
+    if (netif->input(in, netif) != ERR_OK) {
+      pbuf_free(in);
+    }
+    #else
     /* loopback packets are always IP packets! */
     if (ip_input(in, netif) != ERR_OK) {
       pbuf_free(in);
     }
+    #endif /* EIPS */
+
     SYS_ARCH_PROTECT(lev);
   }
   SYS_ARCH_UNPROTECT(lev);

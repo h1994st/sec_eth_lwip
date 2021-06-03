@@ -48,6 +48,10 @@
 #include "lwip/netif.h"
 #include "lwip/prot/ip4.h"
 
+#ifdef EIPS
+#include "ipsec/config.h"
+#endif /* EIPS */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

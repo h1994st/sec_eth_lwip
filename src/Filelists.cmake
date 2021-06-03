@@ -57,6 +57,19 @@ set(lwipcore_SRCS
     ${LWIP_DIR}/src/core/timeouts.c
     ${LWIP_DIR}/src/core/udp.c
 )
+# IPSec files
+set(lwipipsec_SRCS
+    ${LWIP_DIR}/src/ipsec/core/ah.c
+	${LWIP_DIR}/src/ipsec/core/ipsec_des.c
+	${LWIP_DIR}/src/ipsec/core/esp.c
+	${LWIP_DIR}/src/ipsec/core/ipsec.c
+	${LWIP_DIR}/src/ipsec/core/ipsec_md5.c
+	${LWIP_DIR}/src/ipsec/core/sa.c
+	${LWIP_DIR}/src/ipsec/core/ipsec_sha1.c
+	${LWIP_DIR}/src/ipsec/core/util.c
+	${LWIP_DIR}/src/ipsec/core/config.c
+	${LWIP_DIR}/src/ipsec/core/ipsecdev.c
+)
 set(lwipcore4_SRCS
     ${LWIP_DIR}/src/core/ipv4/acd.c
     ${LWIP_DIR}/src/core/ipv4/autoip.c
@@ -234,6 +247,7 @@ set(lwipnoapps_SRCS
     ${lwipnetif_SRCS}
     ${lwipsixlowpan_SRCS}
     ${lwipppp_SRCS}
+    ${lwipipsec_SRCS}
 )
 
 # LWIPAPPFILES: All LWIP APPs
