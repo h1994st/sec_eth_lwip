@@ -16,6 +16,7 @@
 #include "lwip/tcpip.h"
 #include "lwip/netif.h"
 #include "lwip/api.h"
+#include "lwip/sockets.h"
 
 #include "lwip/tcp.h"
 #include "lwip/udp.h"
@@ -139,7 +140,7 @@ preload_init(void * arg)
 #endif /* NO_SYS */
 
   /* init randomizer again (seed per thread) */
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(0));
 
   /* init network interfaces */
   preload_netif_init();
