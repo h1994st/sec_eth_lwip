@@ -1543,3 +1543,13 @@ pbuf_strstr(const struct pbuf *p, const char *substr)
   }
   return pbuf_memfind(p, substr, (u16_t)substr_len, 0);
 }
+
+
+void debug_print_pbuf(const struct pbuf *p) {
+  unsigned int i = 0;
+  for (i=0; i < p->tot_len; i++) {
+      char* buf = (char*)p->payload;
+      printf("%02x ", buf[i] & 0xff);
+  }
+  printf("\n");
+}

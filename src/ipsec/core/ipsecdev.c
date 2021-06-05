@@ -18,6 +18,7 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
     spd_entry* spd;
 
     printf("Inside IPSecdev INPUT\n");
+    /* printf("input in\n");debug_print_pbuf(p); */
 
     /* check packet has data */
     if (p == NULL || p->payload == NULL) {
@@ -50,6 +51,7 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
                     pbuf_free(p);
                 }
                 IPSEC_LOG_MSG("ipsecdev_input", ("fwd decapsulated IPsec packet"));
+                printf("input out\n");debug_print_pbuf(p);
                 return data->orig_input(p, inp);
             } else {
                 IPSEC_LOG_ERR("ipsecdev_input",
@@ -102,6 +104,7 @@ static err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr
     int space_overhead = 0;
 
     printf("Inside IPSecdev OUTPUT\n");
+    printf("output in\n");debug_print_pbuf(p);
 
     /* chained pbuf check */
 	if(p->next != NULL) {
@@ -154,6 +157,7 @@ static err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr
                     IPSEC_LOG_ERR("ipsecdev_output", IPSEC_AUDIT_FAILURE, ("failed to remove unnecessary IPSec space"));
                 }
                 IPSEC_LOG_MSG("ipsec_output", ("fwd IPsec packet to HW mapped device") );
+                /* printf("output out\n");debug_print_pbuf(p); */
                 data->orig_output(netif, p, ipaddr);
             } else {
                 IPSEC_LOG_ERR("ipsec_output", status, ("error on ipsec_output() processing"));

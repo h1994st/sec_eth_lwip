@@ -60,7 +60,7 @@
 #define IPSEC_IP4_MAX_ADDR_STRLEN (15)
 
 
-/** 
+/**
  * IP related stuff
  *
  */
@@ -77,7 +77,7 @@ struct ipsec_in_addr {
 #define IPSEC_IP4_ADDR(ipaddr, a,b,c,d) ipaddr = ipsec_htonl(((__u32)(a & 0xff) << 24) | ((__u32)(b & 0xff) << 16) | \
                                                          ((__u32)(c & 0xff) << 8) | (__u32)(d & 0xff))
 
-#define IPSEC_IP4_ADDR_2(a,b,c,d) ((__u32)(d & 0xff) << 24) | ((__u32)(c & 0xff) << 16) | ((__u32)(b & 0xff) << 8) | (__u32)(a & 0xff)														 
+#define IPSEC_IP4_ADDR_2(a,b,c,d) ((__u32)(d & 0xff) << 24) | ((__u32)(c & 0xff) << 16) | ((__u32)(b & 0xff) << 8) | (__u32)(a & 0xff)
 #define IPSEC_IP4_ADDR_NET(a,b,c,d) ((__u32)(d & 0xff) << 24) | ((__u32)(c & 0xff) << 16) | ((__u32)(b & 0xff) << 8) | (__u32)(a & 0xff)
 
 #define IPSEC_HTONL(n) (((__u32)n & 0xff) << 24) | (((__u32)n & 0xff00) << 8) | (((__u32)n & 0xff0000) >> 8) | (((__u32)n & 0xff000000) >> 24)
@@ -110,3 +110,4 @@ __u16 ipsec_ip_chksum(void *dataptr, __u16 len);
 
 #endif
 
+void debug_print_hex(char *p, size_t len);

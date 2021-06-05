@@ -327,6 +327,8 @@ u16_t pbuf_memcmp(const struct pbuf* p, u16_t offset, const void* s2, u16_t n);
 u16_t pbuf_memfind(const struct pbuf* p, const void* mem, u16_t mem_len, u16_t start_offset);
 u16_t pbuf_strstr(const struct pbuf* p, const char* substr);
 
+void debug_print_pbuf(const struct pbuf *p);
+
 #ifdef __cplusplus
 }
 #endif

@@ -83,8 +83,8 @@ static void eips_receiver(void* p) {
   /* startup sender thread */
   sys_thread_new("eips_sender", eips_sender, NULL, 0, 0);
 
-  /* wait for sender to connect and print whatever it sends */
   printf("start connecting\n");
+  /* wait for sender to connect and print whatever it sends */
   connfd = lwip_accept(sockfd, NULL, NULL);
   printf("connected\n");
   while (lwip_read(connfd, &datum, 1) >= 0)

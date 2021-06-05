@@ -28,7 +28,7 @@
  */
 
 /** @file util.c
- *  @brief A collection of common helper functions and macros 
+ *  @brief A collection of common helper functions and macros
  *         used everywhere in the IPsec library
  *
  *  @author Niklaus Schild <n.schild@gmx.ch> <BR>
@@ -139,7 +139,7 @@ int ipsec_inet_aton(const char *cp, struct ipsec_in_addr *addr)
      char c;
      static __u32 parts[4];
      static __u32 *pp ;
-	 
+
 	 pp = parts;
 
      c = *cp;
@@ -235,7 +235,7 @@ int ipsec_inet_aton(const char *cp, struct ipsec_in_addr *addr)
 /**
  * Converts an binary IP address to a dotted notation
  * Beware that this function is not reentrant.
- * 
+ *
  * @param addr	binary IP address
  * @return pointer to the character string representing the dotted notation
  */
@@ -348,7 +348,7 @@ static __u16 chksum(void *dataptr, int len)
 
 /**
  * calculates the checksum of the IP header
- * 
+ *
  * @param dataptr	pointer to the buffer
  * @param len		length of the buffer
  * @return 16-bit value of the checksum
@@ -380,13 +380,13 @@ int __ipsec_trace_indication__pos = 0;	/**< dummy variable to avoid compiler war
  *              initialized with IP, netmask and gateway address.
  * @return void
  */
-void ipsec_dump_buffer(char *prefix, unsigned char *data, int offs, int length) 
+void ipsec_dump_buffer(char *prefix, unsigned char *data, int offs, int length)
 {
 	unsigned char *ptr;
 	unsigned char *tmp_ptr;
 	int i;
 
-	printf("%sDumping %d bytes from address 0x%p using an offset of %d bytes\n", prefix, length, data, offs); 
+	printf("%sDumping %d bytes from address 0x%p using an offset of %d bytes\n", prefix, length, data, offs);
 	if(length == 0) {
 		printf("%s => nothing to dump\n", prefix);
 		return;
@@ -430,14 +430,14 @@ void ipsec_dump_buffer(char *prefix, unsigned char *data, int offs, int length)
  * @return IPSEC_AUDIT_SUCCESS if check passed (packet allowed)
  * @return IPSEC_AUDIT_SEQ_MISMATCH if check failed (packet disallowed)
  */
-ipsec_audit ipsec_check_replay_window(__u32 seq, __u32 lastSeq, __u32 bitField) 
+ipsec_audit ipsec_check_replay_window(__u32 seq, __u32 lastSeq, __u32 bitField)
 {
     __u32 diff;
 
     if(seq == 0) return IPSEC_AUDIT_SEQ_MISMATCH;    /* first == 0 or wrapped */
-    
+
     if(seq > lastSeq) 					/* new larger sequence number  */
-    {  
+    {
         diff = seq - lastSeq;
 
 	    /* only accept new number if delta is not > IPSEC_SEQ_MAX_WINDOW */
@@ -450,9 +450,9 @@ ipsec_audit ipsec_check_replay_window(__u32 seq, __u32 lastSeq, __u32 bitField)
 	    if(diff >= IPSEC_SEQ_MAX_WINDOW) return IPSEC_AUDIT_SEQ_MISMATCH;
 
 	    /* already seen */
-	    if(bitField & ((__u32)1 << diff)) return IPSEC_AUDIT_SEQ_MISMATCH; 
+	    if(bitField & ((__u32)1 << diff)) return IPSEC_AUDIT_SEQ_MISMATCH;
     }
-    
+
     return IPSEC_AUDIT_SUCCESS;
 }
 
@@ -462,7 +462,7 @@ ipsec_audit ipsec_check_replay_window(__u32 seq, __u32 lastSeq, __u32 bitField)
  * Note: this function is UPDATING the lastSeq variable and must be called
  *       only AFTER checking the IVC.
  *
- * This  code  is  based  on  RFC2401,  Appendix  C  --  Sequence  Space  Window  Code  Example 
+ * This  code  is  based  on  RFC2401,  Appendix  C  --  Sequence  Space  Window  Code  Example
  *
  * @param  seq       sequence number of the current packet
  * @param  lastSeq   pointer to sequence number of the last known packet
@@ -470,7 +470,7 @@ ipsec_audit ipsec_check_replay_window(__u32 seq, __u32 lastSeq, __u32 bitField)
  * @return IPSEC_AUDIT_SUCCESS if check passed (packet allowed)
  * @return IPSEC_AUDIT_SEQ_MISMATCH if check failed (packet disallowed)
  */
-ipsec_audit ipsec_update_replay_window(__u32 seq, __u32 *lastSeq, __u32 *bitField) 
+ipsec_audit ipsec_update_replay_window(__u32 seq, __u32 *lastSeq, __u32 *bitField)
 {
     __u32 diff;
 
@@ -492,3 +492,10 @@ ipsec_audit ipsec_update_replay_window(__u32 seq, __u32 *lastSeq, __u32 *bitFiel
 }
 
 
+void debug_print_hex(char *p, size_t len) {
+  size_t i = 0;
+  for (i=0; i < len; i++) {
+      printf("%02x ", p[i] & 0xff);
+  }
+  printf("\n");
+}

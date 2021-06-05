@@ -72,6 +72,8 @@
 
 #include "ipsec/esp.h"
 
+#include "ipsec/util.h"
+
 
 __u32 ipsec_esp_bitmap 	= 0;        		/**< save session state to detect replays - must be 32 bits.
 											 *   Note: must be initialized with zero (0x00000000) when
@@ -257,6 +259,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	unsigned char 		cbc_iv[IPSEC_ESP_IV_SIZE];
 	unsigned char 		digest[IPSEC_MAX_AUTHKEY_LEN];
 	__u8				shift_len;
+	char* ori_ptr = (char*) packet;
 
 	IPSEC_LOG_TRC(IPSEC_TRACE_ENTER,
 	              "ipsec_esp_encapsulate",
@@ -388,7 +391,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	new_ip_header->chksum = ipsec_ip_chksum(new_ip_header, sizeof(ipsec_ip_header));
 
 	/* setup return values */
-	*offset = (char*)new_ip_header - (char*)packet;
+	*offset = (char*)new_ip_header - (char*)ori_ptr;
 	*len = payload_len + IPSEC_MIN_IPHDR_SIZE ;
 
 	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_esp_encapsulate", ("return = %d", IPSEC_STATUS_SUCCESS) );
