@@ -76,6 +76,20 @@ APPFILES=src/eips_test.c \
 	src/lwip_driver.c \
 	src/default_netif.c
 
+SENDERFILES=src/eips_test.c \
+	src/lwip_sender.c \
+	src/default_netif.c
+
+RECEIVERFILES=src/eips_test.c \
+	src/lwip_receiver.c \
+	src/default_netif.c
+
+ALLAPPFILES=src/eips_test.c \
+	src/lwip_driver.c \
+	src/lwip_sender.c \
+	src/lwip_receiver.c \
+	src/default_netif.c
+
 # lwIP source files.
 include $(LWIPDIR)/Filelists.mk
 
@@ -97,6 +111,9 @@ $(LWIPLIB): $(LWIPOBJS)
 	$(AR) $(ARFLAGS) $(LWIPLIB) $?
 
 APPOBJS=$(notdir $(APPFILES:.c=.o))
+SENDEROBJS=$(notdir $(SENDERFILES:.c=.o))
+RECEIVEROBJS=$(notdir $(RECEIVERFILES:.c=.o))
+ALLAPPOBJS=$(notdir $(ALLAPPFILES:.c=.o))
 
 %.o:
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -104,7 +121,7 @@ APPOBJS=$(notdir $(APPFILES:.c=.o))
 ################################################################################
 # Build header file dependencies for all object files ##########################
 ################################################################################
-.depend: $(LWIPFILES) $(APPFILES)
+.depend: $(LWIPFILES) $(ALLAPPFILES)
 	@$(CC) $(CFLAGS) -MM $^ > .depend || rm -f .depend
 
 include .depend
@@ -112,10 +129,16 @@ include .depend
 ################################################################################
 # Primary Targets ##############################################################
 ################################################################################
-all: app
+all: app sender receiver
 
 app: .depend $(LWIPLIB) $(APPOBJS)
 	$(CC) $(CFLAGS) -o app $(APPOBJS) $(LWIPLIB) $(LDFLAGS)
+
+sender: .depend $(LWIPLIB) $(SENDEROBJS)
+	$(CC) $(CFLAGS) -o sender $(SENDEROBJS) $(LWIPLIB) $(LDFLAGS)
+
+receiver: .depend $(LWIPLIB) $(RECEIVEROBJS)
+	$(CC) $(CFLAGS) -o receiver $(RECEIVEROBJS) $(LWIPLIB) $(LDFLAGS)
 
 clean:
 	rm -f *.o $(LWIPLIB) $(APPOBJS) app .depend

@@ -327,5 +327,5 @@ void lwip_example_app_platform_assert(const char *msg, int line, const char *fil
 
 #define MEMP_USE_CUSTOM_POOLS 1
 #define MEM_USE_POOLS 1
-#define EIPS 1
-#define DUMMY_LOOPBACK_SA_SP 1
+#define EIPS 0
+#define DUMMY_LOOPBACK_SA_SP 0

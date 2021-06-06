@@ -18,7 +18,7 @@
 
 
 /* EIPS Sender */
-static void eips_sender(void* p) {
+void eips_sender(void* p) {
   int sockfd;
   struct sockaddr_in servaddr;
   char msg[] = "aaaaa\n";
@@ -48,7 +48,7 @@ static void eips_sender(void* p) {
 
 
 /* EIPS Receiver */
-static void eips_receiver(void* p) {
+void eips_receiver(void* p) {
   int sockfd;
   char buffer[100];
   struct sockaddr_in servaddr;
