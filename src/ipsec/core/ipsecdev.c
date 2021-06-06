@@ -111,7 +111,7 @@ static err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr
   		IPSEC_LOG_DBG("ipsecdev_output",
                       IPSEC_STATUS_DATA_SIZE_ERROR,
                       ("can not handle chained pbuf"));
-		return ERR_CONN;
+        return ERR_CONN;
 	}
 
     /* pbuf reference check */
