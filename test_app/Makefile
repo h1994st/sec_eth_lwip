@@ -36,6 +36,12 @@
 ################################################################################
 # Constants ####################################################################
 ################################################################################
+CONNECTION?=0
+IPSEC?=0
+MACSEC?=0
+ADDR_LAST_BYTE?=200
+RECEIVER_ADDR?=127.0.0.1
+
 CC=gcc
 AR=ar
 
@@ -67,6 +73,23 @@ CFLAGS+= -Wlogical-op -Wc90-c99-compat -Wtrampolines
 CFLAGS+=-Iinclude \
 	-I$(LWIPDIR)/include \
 	-I$(LWIPARCH)/include \
+
+# define macros
+CFLAGS+=-DCONNECTION=$(CONNECTION) \
+	-DADDR_LAST_BYTE=$(ADDR_LAST_BYTE) \
+	-DRECEIVER_ADDR=\"$(RECEIVER_ADDR)\"
+
+ifeq ($(IPSEC),1)
+	CFLAGS+=-DEIPS=1 -DDUMMY_LOOPBACK_SA_SP=1
+else
+  CFLAGS+=-DEIPS=0 -DDUMMY_LOOPBACK_SA_SP=0
+endif
+
+ifeq ($(MACSEC),1)
+	CFLAGS+=-DMACSEC=1
+else
+	CFLAGS+=-DMACSEC=0
+endif
 
 ################################################################################
 # Define source files ##########################################################
@@ -141,6 +164,6 @@ receiver: .depend $(LWIPLIB) $(RECEIVEROBJS)
 	$(CC) $(CFLAGS) -o receiver $(RECEIVEROBJS) $(LWIPLIB) $(LDFLAGS)
 
 clean:
-	rm -f *.o $(LWIPLIB) $(APPOBJS) app .depend
+	rm -f *.o $(LWIPLIB) $(APPOBJS) app sender receiver .depend
 
-.PHONY: all clean
+.PHONY: all app sender receiver clean

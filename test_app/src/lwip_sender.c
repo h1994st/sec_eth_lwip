@@ -182,7 +182,7 @@ static void test_init(void *arg) {
   test_netif_init();
 
   #if LWIP_SOCKET
-    eips_sender(NULL);
+    eips_test_sender();
   #endif
 
   sys_sem_signal(init_sem);

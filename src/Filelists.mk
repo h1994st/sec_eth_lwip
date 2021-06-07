@@ -64,6 +64,9 @@ IPSECFILES=$(LWIPDIR)/ipsec/core/ah.c \
 	$(LWIPDIR)/ipsec/core/config.c \
 	$(LWIPDIR)/ipsec/core/ipsecdev.c
 
+# MACSECFILES: MacSec protocol files
+MACSECFILES=$(LWIPDIR)/macsec/macsec.c
+
 CORE4FILES=$(LWIPDIR)/core/ipv4/acd.c \
 	$(LWIPDIR)/core/ipv4/autoip.c \
 	$(LWIPDIR)/core/ipv4/dhcp.c \
@@ -147,7 +150,8 @@ LWIPFILES=$(COREFILES) \
 	$(NETIFFILES) \
 	$(PPPFILES) \
 	$(SIXLOWPAN) \
-	$(IPSECFILES)
+	$(IPSECFILES) \
+	$(MACSECFILES)
 
 # SNMPFILES: SNMPv2c agent
 SNMPFILES=$(LWIPDIR)/apps/snmp/snmp_asn1.c \

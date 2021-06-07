@@ -20,10 +20,10 @@
 /* #define USE_AUTOIP  0 */
 
 /* #define USE_PCAPIF 1 */
-#ifndef LOCAL_IP
-  #define LOCAL_IP 200
+#ifndef ADDR_LAST_BYTE
+   #define ADDR_LAST_BYTE 200
 #endif
-#define LWIP_PORT_INIT_IPADDR(addr)   IP4_ADDR((addr), 192,168,1,LOCAL_IP)
+#define LWIP_PORT_INIT_IPADDR(addr)   IP4_ADDR((addr), 192,168,1,ADDR_LAST_BYTE)
 #define LWIP_PORT_INIT_GW(addr)       IP4_ADDR((addr), 192,168,1,1)
 #define LWIP_PORT_INIT_NETMASK(addr)  IP4_ADDR((addr), 255,255,255,0)
 

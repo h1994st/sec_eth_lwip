@@ -32,6 +32,10 @@
 #ifndef LWIP_LWIPOPTS_H
 #define LWIP_LWIPOPTS_H
 
+#ifdef LWIP_OPTTEST_FILE
+#include "lwipopts_test.h"
+#else /* LWIP_OPTTEST_FILE */
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0
 
@@ -102,17 +106,6 @@
 #endif
 
 #define LWIP_DBG_TYPES_ON         (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
-
-/* ----- PCAP Debug File Options (owebb@umich.edu) ----- */
-/* PCAP_DBG_FLAG: When this flag is set, lwIP will dump all traffic that 
- * passes through the lwIP loopback interface to the pcap file specified by 
- * PCAP_DBG_FILE */
-#define PCAP_DBG_FLAG            1
-#define PCAP_DBG_FILE            "/tmp/dbg.pcap"
-
-/* ------------ Embedded IPSec options (owebb@umich.edu) ------------- */
-#define EIPS                     1
-#define DUMMY_LOOPBACK_SA_SP     1         
 
 
 /* ---------- Memory options ---------- */
@@ -245,7 +238,7 @@ a lot of data that needs to be copied, this should be set high. */
 /* ---------- DHCP options ---------- */
 /* Define LWIP_DHCP to 1 if you want DHCP configuration of
    interfaces. */
-#define LWIP_DHCP               0
+#define LWIP_DHCP               LWIP_UDP
 
 /* 1 if you want to do an ARP check on the offered address
    (recommended). */
@@ -328,4 +321,18 @@ void sys_check_core_locking(void);
 /* Define LWIP_PLATFORM_ASSERT to something to catch missing stdio.h includes */
 void lwip_example_app_platform_assert(const char *msg, int line, const char *file);
 #define LWIP_PLATFORM_ASSERT(x) lwip_example_app_platform_assert(x, __LINE__, __FILE__)
+#endif
+
+#endif /* LWIP_LWIPOPTS_H */
+
+#define MEMP_USE_CUSTOM_POOLS 1
+#define MEM_USE_POOLS 1
+#ifndef EIPS
+   #define EIPS 0
+#endif
+#ifndef DUMMY_LOOPBACK_SA_SP
+   #define DUMMY_LOOPBACK_SA_SP 0
+#endif
+#ifndef MACSEC
+   #define MACSEC 0
 #endif

@@ -82,6 +82,10 @@
 #include "ipsec/ipsecdev.h"
 #endif /* EIPS */
 
+#if MACSEC
+#include "macsec/macsec.h"
+#endif /* MACSEC */
+
 #if LWIP_AUTOIP
 #include "lwip/autoip.h"
 #endif /* LWIP_AUTOIP */
@@ -196,6 +200,10 @@ netif_loopif_init(struct netif *netif)
   #if EIPS
   ipsecdev_add(&loop_netif);
   #endif /* EIPS */
+
+  #if MACSEC
+  macsecdev_add(&loop_netif);
+  #endif /* MACSEC */
 
   return ERR_OK;
 }

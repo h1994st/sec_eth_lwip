@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch ipsec_app",
+            "name": "(gdb) Launch test_app sender",
             "type": "cppdbg",
             "request": "launch",
             "args": [],
             "stopAtEntry": true,
-            "environment": [],
+            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap1"}],
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -20,24 +20,22 @@
                 }
             ],
             "linux": {
-                "cwd": "${workspaceFolder}/ipsec_app",
-                "program": "${workspaceFolder}/ipsec_app/app",
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/sender",
             },
             "windows": {
-                "cwd": "${workspaceFolder}/ipsec_app",
-                "program": "${workspaceFolder}/ipsec_app/app",
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/sender",
             }
         },
         {
-            "name": "(gdb) Launch example_app",
+            "name": "(gdb) Launch test_app receiver",
             "type": "cppdbg",
             "request": "launch",
             "args": [],
             "stopAtEntry": true,
-            "environment": [],
-            "externalConsole": true,
+            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap0"}],
             "MIMode": "gdb",
-            "preLaunchTask": "Build example_app",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -46,12 +44,36 @@
                 }
             ],
             "linux": {
-                "cwd": "${workspaceFolder}/build/contrib/ports/unix/example_app",
-                "program": "${workspaceFolder}/build/contrib/ports/unix/example_app/example_app",
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/receiver",
             },
             "windows": {
-                "cwd": "${workspaceFolder}/build/contrib/ports/win32/example_app",
-                "program": "${workspaceFolder}/build/contrib/ports/win32/example_app/example_app",
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/receiver",
+            }
+        },
+        {
+            "name": "(gdb) Launch test_app",
+            "type": "cppdbg",
+            "request": "launch",
+            "args": [],
+            "stopAtEntry": true,
+            "environment": [],
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "linux": {
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/app",
+            },
+            "windows": {
+                "cwd": "${workspaceFolder}/test_app",
+                "program": "${workspaceFolder}/test_app/app",
             }
         },
         {
