@@ -133,6 +133,10 @@ low_level_init(struct netif *netif)
   netif->hwaddr[5] = 0xab;
   netif->hwaddr_len = 6;
 
+  if (preconfigured_tapif != NULL && strcmp(preconfigured_tapif, "tap0") != 0) {
+    netif->hwaddr[5] = 0xff;
+  }
+
   /* device capabilities */
   netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_IGMP;
 
