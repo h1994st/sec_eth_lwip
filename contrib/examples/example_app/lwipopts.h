@@ -329,3 +329,4 @@ void lwip_example_app_platform_assert(const char *msg, int line, const char *fil
 #define MEM_USE_POOLS 0
 #define EIPS 0
 #define DUMMY_LOOPBACK_SA_SP 0
+#define MACSEC 0

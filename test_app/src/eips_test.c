@@ -11,13 +11,11 @@
 #include "eips_test.h"
 
 /* Options */
-/*
 #ifdef RECEIVER_ADDR
   #define ADDR RECEIVER_ADDR
 #else
   #define ADDR "127.0.0.1"
-#endif */
-#define ADDR "192.168.1.3"
+#endif
 #define PORT 8000
 
 

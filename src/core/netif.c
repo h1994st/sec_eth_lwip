@@ -194,15 +194,15 @@ netif_loopif_init(struct netif *netif)
   NETIF_SET_CHECKSUM_CTRL(netif, NETIF_CHECKSUM_DISABLE_ALL);
 
   #ifdef PCAP_DBG_FLAG
-  pcap_dump_add(&loop_netif, PCAP_DBG_FILE);
+  pcap_dump_add(&netif, PCAP_DBG_FILE);
   #endif /* PCAP_DBG_FLAG */
 
   #if EIPS
-  ipsecdev_add(&loop_netif);
+  ipsecdev_add(&netif);
   #endif /* EIPS */
 
   #if MACSEC
-  macsecdev_add(&loop_netif);
+  macsecdev_add(&netif);
   #endif /* MACSEC */
 
   return ERR_OK;

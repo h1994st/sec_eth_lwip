@@ -39,7 +39,8 @@
 CONNECTION?=0
 IPSEC?=0
 MACSEC?=0
-ADDR_LAST_BYTE?=200
+ADDR_BYTE_3?=1
+ADDR_BYTE_4?=1
 RECEIVER_ADDR?=127.0.0.1
 
 CC=gcc
@@ -76,7 +77,8 @@ CFLAGS+=-Iinclude \
 
 # define macros
 CFLAGS+=-DCONNECTION=$(CONNECTION) \
-	-DADDR_LAST_BYTE=$(ADDR_LAST_BYTE) \
+	-DADDR_BYTE_3=$(ADDR_BYTE_3) \
+	-DADDR_BYTE_4=$(ADDR_BYTE_4) \
 	-DRECEIVER_ADDR=\"$(RECEIVER_ADDR)\"
 
 ifeq ($(IPSEC),1)
@@ -164,6 +166,6 @@ receiver: .depend $(LWIPLIB) $(RECEIVEROBJS)
 	$(CC) $(CFLAGS) -o receiver $(RECEIVEROBJS) $(LWIPLIB) $(LDFLAGS)
 
 clean:
-	rm -f *.o $(LWIPLIB) $(APPOBJS) app sender receiver .depend
+	rm -f *.o $(LWIPLIB) $(APPOBJS) .depend
 
 .PHONY: all app sender receiver clean

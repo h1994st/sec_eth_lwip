@@ -20,11 +20,14 @@
 /* #define USE_AUTOIP  0 */
 
 /* #define USE_PCAPIF 1 */
-#ifndef ADDR_LAST_BYTE
-   #define ADDR_LAST_BYTE 200
+#ifndef ADDR_BYTE_3
+   #define ADDR_BYTE_4 1
 #endif
-#define LWIP_PORT_INIT_IPADDR(addr)   IP4_ADDR((addr), 192,168,1,ADDR_LAST_BYTE)
-#define LWIP_PORT_INIT_GW(addr)       IP4_ADDR((addr), 192,168,1,1)
+#ifndef ADDR_BYTE_4
+   #define ADDR_BYTE_4 1
+#endif
+#define LWIP_PORT_INIT_IPADDR(addr)   IP4_ADDR((addr), 192,168,ADDR_BYTE_3,ADDR_BYTE_4)
+#define LWIP_PORT_INIT_GW(addr)       IP4_ADDR((addr), 192,168,ADDR_BYTE_3,1)
 #define LWIP_PORT_INIT_NETMASK(addr)  IP4_ADDR((addr), 255,255,255,0)
 
 /* remember to change this MAC address to suit your needs!

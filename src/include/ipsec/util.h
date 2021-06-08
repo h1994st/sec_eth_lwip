@@ -108,6 +108,6 @@ __u32 ipsec_ntohl(__u32 n);
 
 __u16 ipsec_ip_chksum(void *dataptr, __u16 len);
 
-#endif
-
 void debug_print_hex(char *p, size_t len);
+
+#endif

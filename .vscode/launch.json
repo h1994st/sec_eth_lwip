@@ -10,7 +10,7 @@
             "request": "launch",
             "args": [],
             "stopAtEntry": true,
-            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap1"}],
+            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap0"}],
             "MIMode": "gdb",
             "setupCommands": [
                 {
@@ -34,7 +34,7 @@
             "request": "launch",
             "args": [],
             "stopAtEntry": true,
-            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap0"}],
+            "environment": [{"name":"PRECONFIGURED_TAPIF", "value":"tap1"}],
             "MIMode": "gdb",
             "setupCommands": [
                 {
