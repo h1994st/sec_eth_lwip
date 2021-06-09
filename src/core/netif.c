@@ -1336,6 +1336,7 @@ netif_poll(struct netif *netif)
       pbuf_free(in);
     }
     #else
+
     /* loopback packets are always IP packets! */
     if (ip_input(in, netif) != ERR_OK) {
       pbuf_free(in);

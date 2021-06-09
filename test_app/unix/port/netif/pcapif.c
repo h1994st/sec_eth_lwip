@@ -97,7 +97,7 @@ timeout(void *arg)
      ip_lookup(pcapif->pkt + 14, netif)) {
 
     /* We allocate a pbuf chain of pbufs from the pool. */
-    p = pbuf_alloc(PBUF_LINK, pcapif->len, PBUF_POOL);
+    p = pbuf_alloc(PBUF_LINK, pcapif->len, PBUF_RAM);
 
     if (p != NULL) {
       pbuf_take(p, pcapif->pkt, pcapif->len);

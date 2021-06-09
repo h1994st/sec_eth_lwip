@@ -5,6 +5,7 @@ spd_entry outbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     /*           src          src mask    dst         dst mask    inner packet protocol   src port    dst port    IPSec processing flag   SPI */
     #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
     /* { SPD_ENTRY( ... ) },
@@ -15,6 +16,7 @@ spd_entry inbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     /*           src          src mask    dst         dst mask    inner packet protocol   src port    dst port    IPSec processing flag   SPI */
     #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
     /* { SPD_ENTRY( ... ) },
@@ -88,5 +90,7 @@ void sa_sp_db_init(void) {
     #if DUMMY_LOOPBACK_SA_SP
     ipsec_spd_add_sa(&(db->inbound_spd.table[0]), &(db->inbound_sad.table[0]));
     ipsec_spd_add_sa(&(db->outbound_spd.table[0]), &(db->outbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->inbound_spd.table[1]), &(db->inbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->outbound_spd.table[1]), &(db->outbound_sad.table[0]));
     #endif /* DUMMY_LOOPBACK_SA_SP */
 }

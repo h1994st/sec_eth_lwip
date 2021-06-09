@@ -85,9 +85,6 @@
 #ifndef EIPS
    #define EIPS 0
 #endif
-#ifndef DUMMY_LOOPBACK_SA_SP
-   #define DUMMY_LOOPBACK_SA_SP 0
-#endif
 #ifndef MACSEC
    #define MACSEC 0
 #endif

@@ -83,9 +83,9 @@ CFLAGS+=-DCONNECTION=$(CONNECTION) \
 	-DRECEIVER_ADDR=\"$(RECEIVER_ADDR)\"
 
 ifeq ($(IPSEC),1)
-	CFLAGS+=-DEIPS=1 -DDUMMY_LOOPBACK_SA_SP=1
+	CFLAGS+=-DEIPS=1
 else
-  CFLAGS+=-DEIPS=0 -DDUMMY_LOOPBACK_SA_SP=0
+  CFLAGS+=-DEIPS=0
 endif
 
 ifeq ($(MACSEC),1)
@@ -97,7 +97,8 @@ endif
 # turn on or turn off auxiliary logs
 ifeq ($(LOG_LEVEL),1)
 	CFLAGS+=-DIPSEC_AUDIT -DIPSEC_MESSAGE -DIPSEC_DEBUG -DIPSEC_TRACE \
-	        -DMACSEC_AUDIT -DMACSEC_MESSAGE -DMACSEC_DEBUG -DMACSEC_TRACE
+	        -DMACSEC_AUDIT -DMACSEC_MESSAGE -DMACSEC_DEBUG -DMACSEC_TRACE \
+					-DLWIP_DEBUG
 endif
 
 ################################################################################

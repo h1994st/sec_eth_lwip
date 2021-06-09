@@ -290,7 +290,7 @@ low_level_input(struct netif *netif)
 #endif
 
   /* We allocate a pbuf chain of pbufs from the pool. */
-  p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
+  p = pbuf_alloc(PBUF_RAW, len, PBUF_RAM);
   if (p != NULL) {
     pbuf_take(p, buf, len);
     /* acknowledge that packet has been read(); */
