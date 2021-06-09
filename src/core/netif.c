@@ -198,11 +198,11 @@ netif_loopif_init(struct netif *netif)
   #endif /* PCAP_DBG_FLAG */
 
   #if EIPS
-  ipsecdev_add(&netif);
+  ipsecdev_add(netif);
   #endif /* EIPS */
 
   #if MACSEC
-  macsecdev_add(&netif);
+  macsecdev_add(netif);
   #endif /* MACSEC */
 
   return ERR_OK;

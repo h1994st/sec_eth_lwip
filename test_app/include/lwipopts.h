@@ -323,16 +323,7 @@ void lwip_example_app_platform_assert(const char *msg, int line, const char *fil
 #define LWIP_PLATFORM_ASSERT(x) lwip_example_app_platform_assert(x, __LINE__, __FILE__)
 #endif
 
-#endif /* LWIP_LWIPOPTS_H */
-
 #define MEMP_USE_CUSTOM_POOLS 1
 #define MEM_USE_POOLS 1
-#ifndef EIPS
-   #define EIPS 0
-#endif
-#ifndef DUMMY_LOOPBACK_SA_SP
-   #define DUMMY_LOOPBACK_SA_SP 0
-#endif
-#ifndef MACSEC
-   #define MACSEC 0
-#endif
+
+#endif /* LWIP_LWIPOPTS_H */

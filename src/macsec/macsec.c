@@ -1,4 +1,5 @@
 #include "macsec/macsec.h"
+#include "macsec/debug.h"
 
 
 struct orig_fns {

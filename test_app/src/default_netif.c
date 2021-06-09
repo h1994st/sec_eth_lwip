@@ -37,6 +37,12 @@
 #include "lwip/tcpip.h"
 #include "netif/tapif.h"
 #include "default_netif.h"
+#if EIPS
+#include "ipsec/ipsecdev.h"
+#endif
+#if MACSEC
+#include "macsec/macsec.h"
+#endif
 
 static struct netif netif;
 
@@ -52,6 +58,12 @@ void init_default_netif(void)
 netif_add(&netif, NETIF_ADDRS NULL, tapif_init, netif_input);
 #else
   netif_add(&netif, NETIF_ADDRS NULL, tapif_init, tcpip_input);
+#endif
+#if EIPS
+  ipsecdev_add(&netif);
+#endif
+#if MACSEC
+  macsecdev_add(&netif);
 #endif
   netif_set_default(&netif);
 }

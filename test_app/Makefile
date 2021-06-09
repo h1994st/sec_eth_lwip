@@ -42,6 +42,7 @@ MACSEC?=0
 ADDR_BYTE_3?=1
 ADDR_BYTE_4?=1
 RECEIVER_ADDR?=127.0.0.1
+LOG_LEVEL?=0
 
 CC=gcc
 AR=ar
@@ -91,6 +92,12 @@ ifeq ($(MACSEC),1)
 	CFLAGS+=-DMACSEC=1
 else
 	CFLAGS+=-DMACSEC=0
+endif
+
+# turn on or turn off auxiliary logs
+ifeq ($(LOG_LEVEL),1)
+	CFLAGS+=-DIPSEC_AUDIT -DIPSEC_MESSAGE -DIPSEC_DEBUG -DIPSEC_TRACE \
+	        -DMACSEC_AUDIT -DMACSEC_MESSAGE -DMACSEC_DEBUG -DMACSEC_TRACE
 endif
 
 ################################################################################

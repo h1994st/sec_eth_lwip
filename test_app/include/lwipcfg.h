@@ -81,3 +81,13 @@
 
 /* define this to your custom application-init function */
 /* #define LWIP_APP_INIT my_app_init() */
+
+#ifndef EIPS
+   #define EIPS 0
+#endif
+#ifndef DUMMY_LOOPBACK_SA_SP
+   #define DUMMY_LOOPBACK_SA_SP 0
+#endif
+#ifndef MACSEC
+   #define MACSEC 0
+#endif
