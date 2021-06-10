@@ -66,7 +66,10 @@ IPSECFILES=$(LWIPDIR)/ipsec/core/ah.c \
 
 # MACSECFILES: MacSec protocol files
 MACSECFILES=$(LWIPDIR)/macsec/macsec.c \
-  $(LWIPDIR)/macsec/util.c
+  $(LWIPDIR)/macsec/util.c \
+	$(LWIPDIR)/macsec/config.c \
+	$(LWIPDIR)/macsec/api.c \
+	$(LWIPDIR)/macsec/crypto.c
 
 CORE4FILES=$(LWIPDIR)/core/ipv4/acd.c \
 	$(LWIPDIR)/core/ipv4/autoip.c \

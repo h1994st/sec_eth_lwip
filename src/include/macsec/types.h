@@ -47,50 +47,36 @@ typedef enum macsec_audit_list {					/** This value is returned if ... */
 } macsec_audit;
 
 
-typedef enum macsec_ip_protocol_list {			/** IP protocol number for ... */
-	MACSEC_PROTO_ICMP				= 0x01,		/**<  ICMP */
-	MACSEC_PROTO_TCP 				= 0x06, 	/**<  TCP  */
-	MACSEC_PROTO_UDP					= 0x11, 	/**<  UDP  */
-	MACSEC_PROTO_ESP					= 0x32,		/**<  ESP  */
-	MACSEC_PROTO_AH					= 0x33		/**<  AH   */
-} macsec_ip_protocol;
+typedef enum macsec_ethernet_type_list {
+	ETH_IPV4    = 0x0800,
+	ETH_IPV6    = 0x86dd,
+	ETH_ARP     = 0x0806,
+	ETH_MACSEC  = 0x88e5
+} macsec_ethernet_type;
+
+typedef enum macsec_cipher_suite_list {
+	AES_128_CBC = 0
+} macsec_cipher_suite;
 
 #pragma pack(push, 1)
 /* #pragma bytealign */
 
-typedef struct macsec_ip_hdr_struct
+typedef struct ethernet_hdr_struct
 {
-  __u8	v_hl;				/**< version / header length        */
-  __u8	tos;				/**< type of service                */
-  __u16 len;				/**< total length                   */
-  __u16 id;					/**< identification                 */
-  __u16 offset;				/**< fragment offset field / flags  */
-  __u8 	ttl;				/**< time to live                   */
-  __u8  protocol;			/**< protocol                       */
-  __u16 chksum;				/**< checksum                       */
-  __u32 src;				/**< source address                 */
-  __u32 dest; 				/**< destination address            */
-} macsec_ip_header;
+	__u8 dest[6];
+	__u8 src[6];
+	__u16 type;
+} ethernet_header;
 
-typedef struct macsec_tcp_hdr_struct
+typedef struct macsec_hdr_struct
 {
-  __u16 src;				/**< source port number             */
-  __u16 dest;				/**< destination port number        */
-  __u32 seqno;				/**< sequence number                */
-  __u32 ackno;				/**< acknowledge number             */
-  __u16 offset_flags;		/**< offset /flags                  */
-  __u16 wnd;				/**< window                         */
-  __u16 chksum;				/**< checksum                       */
-  __u16 urgp;				/**< urgent pointer                 */
-} macsec_tcp_header;
-
-typedef struct macsec_udp_hdr_struct
-{
-	__u16	src ;			/**< source port number             */
-	__u16	dest ;			/**< destination port number        */
-	__u16	len ;			/**< length of UDP header and data  */
-	__u16	chksum ;		/**< checksum                       */
-} macsec_udp_header ;
+	__u8 dest[6];
+	__u8 src[6];
+	__u16 type;
+	__u16 flags;
+	__u32 pn;
+	__u8 sci[8];
+} macsec_header;
 
 #pragma pack(pop)
 

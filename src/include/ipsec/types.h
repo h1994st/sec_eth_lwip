@@ -61,7 +61,7 @@ typedef int32_t		__s32;
  *
  */
 typedef enum ipsec_status_list {				/** This value is returned if ... */
-	IPSEC_STATUS_SUCCESS   			=  0,		/**<  processing was successful */ 
+	IPSEC_STATUS_SUCCESS   			=  0,		/**<  processing was successful */
 	IPSEC_STATUS_NOT_IMPLEMENTED 	= -1,		/**<  the function is already there but the functionality is not yet implemented */
 	IPSEC_STATUS_FAILURE			= -2,		/**<  failure */
 	IPSEC_STATUS_DATA_SIZE_ERROR	= -3,		/**<  buffer is (unexpectedly) empty or haves wrong size */
@@ -77,7 +77,7 @@ typedef enum ipsec_status_list {				/** This value is returned if ... */
 
 
 typedef enum ipsec_audit_list {					/** This value is returned if ... */
-	IPSEC_AUDIT_SUCCESS   			=  0,		/**<  processing was successful */ 
+	IPSEC_AUDIT_SUCCESS   			=  0,		/**<  processing was successful */
 	IPSEC_AUDIT_NOT_IMPLEMENTED 	=  1,		/**<  the function is already there but the functionality is not yet implemented */
 	IPSEC_AUDIT_FAILURE				=  2,		/**<  failure  */
 	IPSEC_AUDIT_APPLY				=  3,		/**<  packet must be processed by IPsec */
@@ -100,7 +100,7 @@ typedef enum ipsec_ip_protocol_list {			/** IP protocol number for ... */
 #pragma pack(push, 1)
 /* #pragma bytealign */
 
-typedef struct ipsec_ip_hdr_struct 
+typedef struct ipsec_ip_hdr_struct
 {
   __u8	v_hl;				/**< version / header length        */
   __u8	tos;				/**< type of service                */
@@ -114,7 +114,7 @@ typedef struct ipsec_ip_hdr_struct
   __u32 dest; 				/**< destination address            */
 } ipsec_ip_header;
 
-typedef struct ipsec_tcp_hdr_struct 
+typedef struct ipsec_tcp_hdr_struct
 {
   __u16 src;				/**< source port number             */
   __u16 dest;				/**< destination port number        */
@@ -126,7 +126,7 @@ typedef struct ipsec_tcp_hdr_struct
   __u16 urgp;				/**< urgent pointer                 */
 } ipsec_tcp_header;
 
-typedef struct ipsec_udp_hdr_struct 
+typedef struct ipsec_udp_hdr_struct
 {
 	__u16	src ;			/**< source port number             */
 	__u16	dest ;			/**< destination port number        */

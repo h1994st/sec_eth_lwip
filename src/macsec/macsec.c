@@ -67,7 +67,7 @@ static err_t macsec_output_check(struct pbuf* p) {
     return MACSEC_STATUS_SUCCESS;
 }
 
-static err_t macsec_decode(struct pbuf* p) {
+static err_t macsec_input_impl(struct pbuf* p) {
     size_t old_len, new_len;
     void *old_payload, *new_payload;
     err_t err;
@@ -95,7 +95,7 @@ static err_t macsec_decode(struct pbuf* p) {
     return MACSEC_STATUS_SUCCESS;
 }
 
-static err_t macsec_encode(struct pbuf* p) {
+static err_t macsec_output_impl(struct pbuf* p) {
     size_t old_len, new_len;
     void *old_payload, *new_payload;
     err_t err;
@@ -133,7 +133,7 @@ static err_t macsec_input(struct pbuf* p, struct netif *inp) {
         return data->orig_input(p, inp);
     }
 
-    err = macsec_decode(p);
+    err = macsec_input_impl(p);
     if (err != MACSEC_STATUS_SUCCESS) {
         pbuf_free(p);
         return ERR_CONN;
@@ -152,7 +152,7 @@ static err_t macsec_output(struct netif *netif, struct pbuf *p, const ip4_addr_t
         return data->orig_output(netif, p, addr);
     }
 
-    err = macsec_encode(p);
+    err = macsec_output_impl(p);
     if (err != MACSEC_STATUS_SUCCESS) {
         pbuf_free(p);
         return ERR_CONN;
