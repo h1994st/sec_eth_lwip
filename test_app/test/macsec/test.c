@@ -10,6 +10,15 @@ static void debug_print_hex(char *p, size_t len) {
   printf("\n");
 }
 
+/* This function is only required to prevent arch.h including stdio.h
+ * (which it does if LWIP_PLATFORM_ASSERT is undefined)
+ */
+void lwip_example_app_platform_assert(const char *msg, int line, const char *file) {
+  printf("Assertion \"%s\" failed at line %d in %s\n", msg, line, file);
+  fflush(NULL);
+  abort();
+}
+
 int main() {
   u16_t encoded_len, decoded_len;
   char* encoded_packet;

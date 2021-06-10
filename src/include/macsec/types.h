@@ -55,7 +55,8 @@ typedef enum macsec_ethernet_type_list {
 } macsec_ethernet_type;
 
 typedef enum macsec_cipher_suite_list {
-	AES_128_CBC = 0
+	AES_128_CBC = 0,
+	AES_128_GCM = 1
 } macsec_cipher_suite;
 
 #pragma pack(push, 1)

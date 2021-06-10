@@ -124,8 +124,8 @@ static err_t macsec_input_impl(struct pbuf* p) {
 }
 
 static err_t macsec_output_impl(struct pbuf* p) {
-    size_t old_len, new_len;
-    void *old_payload, *new_payload;
+    u16_t old_len, new_len;
+    void *old_payload, *new_payload, *extended_payload;
     err_t err;
     printf("enter macsec encode %d\n", pbuf_get_allocsrc(p));
 
@@ -137,8 +137,10 @@ static err_t macsec_output_impl(struct pbuf* p) {
     new_len = macsec_encode_length(old_payload, old_len);
 
     /* build the new packet */
+    extended_payload = mem_malloc(new_len);
+    memcpy(extended_payload, old_payload, old_len);
     new_payload = mem_malloc(new_len);
-    err = macsec_encode(old_payload, old_len, new_payload, &new_len);
+    err = macsec_encode(extended_payload, old_len, new_payload, &new_len);
     if (err != MACSEC_STATUS_SUCCESS) {
         return err;
     }
@@ -147,6 +149,7 @@ static err_t macsec_output_impl(struct pbuf* p) {
     p->payload = new_payload;
     p->tot_len = new_len;
     p->len = new_len;
+    mem_free(extended_payload);
     /* TODO: how to free this mem safely?
     mem_free(old_payload);
     */

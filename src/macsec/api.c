@@ -38,14 +38,13 @@ err_t macsec_decode(void *old_payload, const u16_t old_len, void *new_payload, u
 
   /* decrypt secure data */
   old_data_length = old_len - MACSEC_HEADER_LEN - MACSEC_ICV_LEN;
-  err = macsec_decrypt(get_default_key(), get_default_iv(), old_payload + MACSEC_HEADER_LEN, old_data_length, new_payload + MAC_LEN * 2, &new_data_length);
+  err = macsec_decrypt(get_default_key(), get_default_iv(), old_payload + MACSEC_HEADER_LEN, old_data_length, new_payload + MAC_LEN * 2, &new_data_length,
+                       old_payload, MAC_LEN * 2, old_payload + MACSEC_HEADER_LEN + old_data_length, MACSEC_ICV_LEN);
   if (err != 0) {
     return MACSEC_STATUS_FAILURE;
   }
   /* update new_len */
   *new_len = MAC_LEN * 2 + new_data_length;
-
-  /* check ICV */
 
   return MACSEC_STATUS_SUCCESS;
 }
@@ -80,15 +79,13 @@ err_t macsec_encode(void *old_payload, const u16_t old_len, void *new_payload, u
 
   /* compute the secure data */
   old_data_length = old_len - MAC_LEN * 2;
-  err = macsec_encrypt(get_default_key(), get_default_iv(), old_payload + MAC_LEN * 2, old_data_length, new_payload + MACSEC_HEADER_LEN, &new_data_length);
+  err = macsec_encrypt(get_default_key(), get_default_iv(), old_payload + MAC_LEN * 2, old_data_length, new_payload + MACSEC_HEADER_LEN, &new_data_length,
+                       old_payload, MAC_LEN * 2, new_payload + MACSEC_HEADER_LEN + macsec_encrypt_len(old_data_length), MACSEC_ICV_LEN);
   if (err != 0) {
     return MACSEC_STATUS_FAILURE;
   }
   /* update new_len if necessary */
   *new_len = MACSEC_HEADER_LEN + new_data_length + MACSEC_ICV_LEN;
-
-  /* compute the ICV check */
-
 
   return MACSEC_STATUS_SUCCESS;
 }
