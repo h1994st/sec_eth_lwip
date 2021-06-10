@@ -107,6 +107,7 @@ static err_t macsec_input_impl(struct pbuf* p) {
     new_payload = mem_malloc(new_len);
     err = macsec_decode(old_payload, old_len, new_payload, &new_len);
     if (err != MACSEC_STATUS_SUCCESS) {
+        mem_free(new_payload);
         return err;
     }
 
@@ -142,7 +143,9 @@ static err_t macsec_output_impl(struct pbuf* p) {
     memcpy(extended_payload, old_payload, old_len);
     new_payload = mem_malloc(new_len);
     err = macsec_encode(extended_payload, old_len, new_payload, &new_len);
+    mem_free(extended_payload);
     if (err != MACSEC_STATUS_SUCCESS) {
+        mem_free(new_payload);
         return err;
     }
 
@@ -150,7 +153,6 @@ static err_t macsec_output_impl(struct pbuf* p) {
     p->payload = new_payload;
     p->tot_len = new_len;
     p->len = new_len;
-    mem_free(extended_payload);
     /* TODO: how to free this mem safely?
     mem_free(old_payload);
     */
