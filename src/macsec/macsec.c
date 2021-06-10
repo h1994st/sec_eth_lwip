@@ -1,6 +1,7 @@
 #include "macsec/macsec.h"
 #include "macsec/debug.h"
 #include "macsec/types.h"
+#include "macsec/api.h"
 
 
 struct orig_fns {
@@ -12,6 +13,9 @@ struct orig_fns {
 static struct orig_fns orig_fns_data[256];
 
 static err_t macsec_input_check(struct pbuf* p) {
+    macsec_header* macsec_hdr;
+    macsec_hdr = (macsec_header*) p->payload;
+
     /* chained pbuf check */
 	if(p->next != NULL) {
   		MACSEC_LOG_DBG("macsec_decode_check",
@@ -33,6 +37,14 @@ static err_t macsec_input_check(struct pbuf* p) {
   		MACSEC_LOG_DBG("macsec_decode_check",
                       MACSEC_STATUS_NOT_IMPLEMENTED,
                       ("can not handle pbuf alloc mode other than PBUF_RAM"));
+		return MACSEC_STATUS_NOT_IMPLEMENTED;
+    }
+
+    /* must be MACsec encoded frame */
+    if (macsec_hdr->type != ETH_MACSEC) {
+  		MACSEC_LOG_DBG("macsec_decode_check",
+                      MACSEC_STATUS_NOT_IMPLEMENTED,
+                      ("the frame is not MACsec"));
 		return MACSEC_STATUS_NOT_IMPLEMENTED;
     }
 
@@ -40,6 +52,9 @@ static err_t macsec_input_check(struct pbuf* p) {
 }
 
 static err_t macsec_output_check(struct pbuf* p) {
+    ethernet_header* eth_hdr;
+    eth_hdr = (ethernet_header*) p->payload;
+
     /* chained pbuf check */
 	if(p->next != NULL) {
   		MACSEC_LOG_DBG("macsec_encode_check",
@@ -64,11 +79,21 @@ static err_t macsec_output_check(struct pbuf* p) {
 		return MACSEC_STATUS_NOT_IMPLEMENTED;
     }
 
+    /* since our tests all work on IPV4, only process IPV4 */
+    /* (u16_t) 0x0800 is recognized as 8? */
+    /*
+    if (eth_hdr->type != ETH_IPV4) {
+  		MACSEC_LOG_DBG("macsec_encode_check",
+                      MACSEC_STATUS_NOT_IMPLEMENTED,
+                      ("can not handle eth type other than ipv4"));
+		return MACSEC_STATUS_NOT_IMPLEMENTED;
+    }*/
+
     return MACSEC_STATUS_SUCCESS;
 }
 
 static err_t macsec_input_impl(struct pbuf* p) {
-    size_t old_len, new_len;
+    u16_t old_len, new_len;
     void *old_payload, *new_payload;
     err_t err;
     printf("enter macsec decode %d\n", pbuf_get_allocsrc(p));
@@ -78,11 +103,14 @@ static err_t macsec_input_impl(struct pbuf* p) {
     old_payload = p->payload;
 
     /* calculate the length of MACsec packet */
-    new_len = old_len;
+    new_len = macsec_decode_length(old_payload, old_len);
 
     /* build the new packet */
     new_payload = mem_malloc(new_len);
-    memcpy(new_payload, old_payload, old_len);
+    err = macsec_decode(old_payload, old_len, new_payload, &new_len);
+    if (err != MACSEC_STATUS_SUCCESS) {
+        return err;
+    }
 
     /* replace the packet */
     p->payload = new_payload;
@@ -106,11 +134,14 @@ static err_t macsec_output_impl(struct pbuf* p) {
     old_payload = p->payload;
 
     /* calculate the length of MACsec packet */
-    new_len = old_len;
+    new_len = macsec_encode_length(old_payload, old_len);
 
     /* build the new packet */
     new_payload = mem_malloc(new_len);
-    memcpy(new_payload, old_payload, old_len);
+    err = macsec_encode(old_payload, old_len, new_payload, &new_len);
+    if (err != MACSEC_STATUS_SUCCESS) {
+        return err;
+    }
 
     /* replace the packet */
     p->payload = new_payload;

@@ -55,7 +55,7 @@ LWIPLIB=liblwip.a
 ################################################################################
 # Define program flags #########################################################
 ################################################################################
-LDFLAGS+=-lutil -pthread -lrt -lpcap
+LDFLAGS+=-lutil -pthread -lrt -lpcap -lwolfssl
 ARFLAGS=rs
 
 # gcc warnings

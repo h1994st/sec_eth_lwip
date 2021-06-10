@@ -2,7 +2,7 @@
 #include "macsec/types.h"
 #include "macsec/crypto.h"
 
-void debug_print_hex(char *p, size_t len) {
+static void debug_print_hex(char *p, size_t len) {
   size_t i = 0;
   for (i=0; i < len; i++) {
       printf("%02x ", p[i] & 0xff);
@@ -27,17 +27,22 @@ int main() {
 
   encoded_len = macsec_encode_length((void*) packet, len);
   encoded_packet = malloc(encoded_len);
-  macsec_encode((void*) packet, len, (void*) encoded_packet, encoded_len);
+  macsec_encode((void*) packet, len, (void*) encoded_packet, &encoded_len);
 
   printf("encoded packet\n");
   debug_print_hex(encoded_packet, encoded_len);
 
   decoded_len = macsec_decode_length((void*) encoded_packet, encoded_len);
   decoded_packet = malloc(decoded_len);
-  macsec_decode((void*) encoded_packet, encoded_len, (void*) decoded_packet, decoded_len);
+  macsec_decode((void*) encoded_packet, encoded_len, (void*) decoded_packet, &decoded_len);
 
   printf("decoded packet\n");
   debug_print_hex(decoded_packet, decoded_len);
 
+  free(encoded_packet);
+  free(decoded_packet);
+
   return 0;
+
+  /* why stack overflow here??? */
 }

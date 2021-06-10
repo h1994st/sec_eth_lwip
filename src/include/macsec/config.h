@@ -3,10 +3,12 @@
 
 #include "macsec/types.h"
 
-#define ETHERNET_HEADER_LEN 14
 #define MAC_LEN 6
 #define PROTO_ID_LEN 2
 
+#define ETHERNET_HEADER_LEN 14
+
+#define MACSEC_HEADER_LEN 28
 #define MACSEC_SECTAG_LEN 16
 #define MACSEC_ICV_LEN 16
 

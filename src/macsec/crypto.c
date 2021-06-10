@@ -20,15 +20,15 @@ static void debug_print_hex(char *p, size_t len) {
   printf("\n");
 }
 
-static int ase_128_cbc_encrypt(byte* key, byte* iv, word32 size, byte* input, byte* output) {
+static int ase_128_cbc_encrypt(byte* key, byte* iv, byte* input, word32 size, byte* output, word32* output_size) {
   Aes aes;
   int ret;
-  word32 full_size, i;
+  word32 i;
 
-  full_size = macsec_encrypt_len(size, AES_BLOCK_SIZE);
-  for (i = size; i < full_size; i++) {
+  *output_size = macsec_encrypt_len(size);
+  for (i = size; i < *output_size; i++) {
       /* pads the added characters with the number of pads */
-      input[i] = (full_size - size);
+      input[i] = (*output_size - size);
   }
 
   ret = wc_AesSetKey(&aes, key, AES_BLOCK_SIZE, iv, AES_ENCRYPTION);
@@ -36,7 +36,7 @@ static int ase_128_cbc_encrypt(byte* key, byte* iv, word32 size, byte* input, by
     return ret;
   }
 
-  ret = wc_AesCbcEncrypt(&aes, output, input, full_size);
+  ret = wc_AesCbcEncrypt(&aes, output, input, *output_size);
   if (ret != 0) {
     return ret;
   }
@@ -44,10 +44,10 @@ static int ase_128_cbc_encrypt(byte* key, byte* iv, word32 size, byte* input, by
   return 0;
 }
 
-static int ase_128_cbc_decrypt(byte* key, byte* iv, word32 size, byte* input, byte* output) {
+static int ase_128_cbc_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* output, word32* output_size) {
   Aes aes;
   int ret;
-  word32 ori_size, i;
+  word32 i;
 
   ret = wc_AesSetKey(&aes, key, AES_BLOCK_SIZE, iv, AES_DECRYPTION);
   if (ret != 0) {
@@ -59,8 +59,8 @@ static int ase_128_cbc_decrypt(byte* key, byte* iv, word32 size, byte* input, by
     return ret;
   }
 
-  ori_size = macsec_decrypt_len(size, output);
-  for (i = ori_size; i < size; i++) {
+  *output_size = macsec_decrypt_len(size, output);
+  for (i = *output_size; i < size; i++) {
     output[i] = 0;
   }
 
@@ -75,14 +75,14 @@ byte* get_default_iv() {
   return default_iv;
 }
 
-word32 macsec_encrypt_len(word32 size, word32 block_size) {
+word32 macsec_encrypt_len(word32 size) {
   int padCounter = 0;
   word32 tmp_len;
 
   tmp_len = size;
 
   /* pads the length until it evenly matches a block / increases pad number*/
-  while (tmp_len % block_size != 0 || padCounter == 0) {
+  while (tmp_len % AES_BLOCK_SIZE != 0 || padCounter == 0) {
       tmp_len++;
       padCounter++;
   }
@@ -92,21 +92,22 @@ word32 macsec_encrypt_len(word32 size, word32 block_size) {
 
 word32 macsec_decrypt_len(word32 size, byte* output) {
   word32 length;
-  length = size - output[size-1];
+  byte padding_len = output[size-1];
+  length = size - padding_len;
   return length;
 }
 
-int macsec_encrypt(byte* key, byte* iv, word32 size, byte* input, byte* output) {
+int macsec_encrypt(byte* key, byte* iv, byte* input, word32 size, byte* output, word32 *output_size) {
   if (MACSEC_CIPHER_SUITE == AES_128_CBC) {
-    return ase_128_cbc_encrypt(key, iv, size, input, output);
+    return ase_128_cbc_encrypt(key, iv, input, size, output, output_size);
   } else {
     return -1;
   }
 }
 
-int macsec_decrypt(byte* key, byte* iv, word32 size, byte* input, byte* output) {
+int macsec_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* output, word32 *output_size) {
   if (MACSEC_CIPHER_SUITE == AES_128_CBC) {
-    return ase_128_cbc_decrypt(key, iv, size, input, output);
+    return ase_128_cbc_decrypt(key, iv, input, size, output, output_size);
   } else {
     return -1;
   }
