@@ -42,9 +42,6 @@ static err_t macsec_input_check(struct pbuf* p) {
 
     /* must be MACsec encoded frame */
     if (macsec_hdr->type != ETH_MACSEC) {
-  		MACSEC_LOG_DBG("macsec_decode_check",
-                      MACSEC_STATUS_NOT_IMPLEMENTED,
-                      ("the frame is not MACsec"));
 		return MACSEC_STATUS_NOT_IMPLEMENTED;
     }
 
@@ -79,8 +76,8 @@ static err_t macsec_output_check(struct pbuf* p) {
 		return MACSEC_STATUS_NOT_IMPLEMENTED;
     }
 
+    /* Update: no restriction on eth type */
     /* since our tests all work on IPV4, only process IPV4 */
-    /* (u16_t) 0x0800 is recognized as 8? */
     /*
     if (eth_hdr->type != ETH_IPV4) {
   		MACSEC_LOG_DBG("macsec_encode_check",
@@ -96,7 +93,8 @@ static err_t macsec_input_impl(struct pbuf* p) {
     u16_t old_len, new_len;
     void *old_payload, *new_payload;
     err_t err;
-    printf("enter macsec decode %d\n", pbuf_get_allocsrc(p));
+    printf("enter macsec decode\n");
+    debug_print_pbuf(p);
 
     /* fetch info from original pbuf */
     old_len = p->tot_len;
@@ -120,6 +118,8 @@ static err_t macsec_input_impl(struct pbuf* p) {
     mem_free(old_payload);
     */
 
+    printf("leave macsec decode\n");
+    debug_print_pbuf(p);
     return MACSEC_STATUS_SUCCESS;
 }
 
@@ -127,7 +127,8 @@ static err_t macsec_output_impl(struct pbuf* p) {
     u16_t old_len, new_len;
     void *old_payload, *new_payload, *extended_payload;
     err_t err;
-    printf("enter macsec encode %d\n", pbuf_get_allocsrc(p));
+    printf("enter macsec encode\n");
+    debug_print_pbuf(p);
 
     /* fetch info from original pbuf */
     old_len = p->tot_len;
@@ -154,13 +155,14 @@ static err_t macsec_output_impl(struct pbuf* p) {
     mem_free(old_payload);
     */
 
+    printf("leave macsec encode\n");
+    debug_print_pbuf(p);
     return MACSEC_STATUS_SUCCESS;
 }
 
 static err_t macsec_input(struct pbuf* p, struct netif *inp) {
     struct orig_fns *data = orig_fns_data + inp->num;
     err_t err;
-    printf("enter macsec_input\n");
 
     err = macsec_input_check(p);
     if (err != MACSEC_STATUS_SUCCESS) {
@@ -178,12 +180,16 @@ static err_t macsec_input(struct pbuf* p, struct netif *inp) {
 
 static err_t macsec_output(struct netif *netif, struct pbuf *p, const ip4_addr_t *addr) {
     struct orig_fns *data = orig_fns_data + netif->num;
+    return data->orig_output(netif, p, addr);
+}
+
+static err_t macsec_linkoutput(struct netif* netif, struct pbuf* p) {
+    struct orig_fns *data = orig_fns_data + netif->num;
     err_t err;
-    printf("enter macsec_output\n");
 
     err = macsec_output_check(p);
     if (err != MACSEC_STATUS_SUCCESS) {
-        return data->orig_output(netif, p, addr);
+        return data->orig_linkoutput(netif, p);
     }
 
     err = macsec_output_impl(p);
@@ -192,11 +198,6 @@ static err_t macsec_output(struct netif *netif, struct pbuf *p, const ip4_addr_t
         return ERR_CONN;
     }
 
-    return data->orig_output(netif, p, addr);
-}
-
-static err_t macsec_linkoutput(struct netif* netif, struct pbuf* p) {
-    struct orig_fns *data = orig_fns_data + netif->num;
     return data->orig_linkoutput(netif, p);
 }
 

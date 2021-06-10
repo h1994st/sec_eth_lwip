@@ -46,12 +46,12 @@ typedef enum macsec_audit_list {					/** This value is returned if ... */
 	MACSEC_AUDIT_POLICY_MISMATCH		=  8		/**<  If a policy for an incoming IPsec packet does not specify APPLY */
 } macsec_audit;
 
-
+/* it seems I need to reverse the order of two types? */
 typedef enum macsec_ethernet_type_list {
-	ETH_IPV4    = 0x0800,
-	ETH_IPV6    = 0x86dd,
-	ETH_ARP     = 0x0806,
-	ETH_MACSEC  = 0x88e5
+	ETH_IPV4    = 0x0008,
+	ETH_IPV6    = 0xdd86,
+	ETH_ARP     = 0x0608,
+	ETH_MACSEC  = 0xe588
 } macsec_ethernet_type;
 
 typedef enum macsec_cipher_suite_list {
