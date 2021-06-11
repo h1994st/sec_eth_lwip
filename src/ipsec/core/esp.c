@@ -66,11 +66,8 @@
 #include "ipsec/debug.h"
 
 #include "ipsec/sa.h"
-#include "ipsec/des.h"
-#include "ipsec/md5.h"
-#include "ipsec/sha1.h"
-
 #include "ipsec/esp.h"
+#include "ipsec/crypto.h"
 
 #include "ipsec/util.h"
 
@@ -81,8 +78,10 @@ __u32 ipsec_esp_bitmap 	= 0;        		/**< save session state to detect replays 
 __u32 ipsec_esp_lastSeq	= 0;         		/**< save session state to detect replays
 											 *   Note: must be initialized with zero (0x00000000) when
 											 *         a new SA is established! */
+static unsigned char     auth_in[8];   /* AES_GCM output, unused */
+static unsigned char     auth_tag[16]; /* AES_GCM output, unused */
 
-
+#define PAD_BLOCK_SIZE 16
 
 /**
  * Returns the number of padding needed for a certain ESP packet size
@@ -94,8 +93,8 @@ static __u8 ipsec_esp_get_padding(int len)
 {
 	int padding ;
 
-	for(padding = 0; padding < 8; padding++)
-		if(((len+padding) % 8) == 0)
+	for(padding = 0; padding < PAD_BLOCK_SIZE; padding++)
+		if(((len+padding) % PAD_BLOCK_SIZE) == 0)
 			break ;
 	return (__u8)padding ;
 }
@@ -147,15 +146,8 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 
 		/* recalcualte ICV */
 		switch(sa->auth_alg) {
-		case IPSEC_HMAC_MD5:
-			hmac_md5((unsigned char *)esp_header, payload_len-IPSEC_AUTH_ICV+IPSEC_ESP_HDR_SIZE,
-			         (unsigned char *)sa->authkey, IPSEC_AUTH_MD5_KEY_LEN, (unsigned char *)&digest);
-			ret_val = IPSEC_STATUS_SUCCESS;
-			break;
-		case IPSEC_HMAC_SHA1:
-			hmac_sha1((unsigned char *)esp_header, payload_len-IPSEC_AUTH_ICV+IPSEC_ESP_HDR_SIZE,
-			          (unsigned char *)sa->authkey, IPSEC_AUTH_SHA1_KEY_LEN, (unsigned char *)&digest);
-			ret_val = IPSEC_STATUS_SUCCESS;
+		case IPSEC_HMAC_SHA256:
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)esp_header, payload_len-IPSEC_AUTH_ICV+IPSEC_ESP_HDR_SIZE, (unsigned char *)&digest, 256);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_esp_decapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this ESP")) ;
@@ -185,12 +177,11 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 
 	/* decapsulate the packet according the SA */
 	if (sa->enc_alg == IPSEC_3DES) {
-		/* copy IV from ESP payload */
-		memcpy(cbc_iv, ((char*)packet)+payload_offset, IPSEC_ESP_IV_SIZE);
-
-		/* decrypt ESP packet */
-		cipher_3des_cbc(((unsigned char*)packet)+payload_offset + IPSEC_ESP_IV_SIZE, payload_len-IPSEC_ESP_IV_SIZE, (unsigned char *)sa->enckey, (unsigned char*)&cbc_iv,
-						 DES_DECRYPT, ((unsigned char*)packet)+payload_offset + IPSEC_ESP_IV_SIZE);
+		/* encrypt ESP packet */
+		aes_128_gcm_decrypt(get_default_aes_key(), get_default_aes_iv(),
+		                    ((unsigned char*)packet)+payload_offset + IPSEC_ESP_IV_SIZE, payload_len-IPSEC_ESP_IV_SIZE,
+		                    ((unsigned char*)packet)+payload_offset + IPSEC_ESP_IV_SIZE, payload_len-IPSEC_ESP_IV_SIZE,
+		                    auth_in, sizeof(auth_in), auth_tag, sizeof(auth_tag));
 	}
 
 	/* now that everything's decrypted, shift everything to the right
@@ -255,8 +246,6 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	__u8				padd;
 	ipsec_ip_header		*new_ip_header;
 	ipsec_esp_header	*new_esp_header;
-	unsigned char 		iv[IPSEC_ESP_IV_SIZE] = {0xD4, 0xDB, 0xAB, 0x9A, 0x9A, 0xDB, 0xD1, 0x94};
-	unsigned char 		cbc_iv[IPSEC_ESP_IV_SIZE];
 	unsigned char 		digest[IPSEC_MAX_AUTHKEY_LEN];
 	__u8				shift_len;
 	char* ori_ptr = (char*) packet;
@@ -327,17 +316,14 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	payload_len = inner_len + IPSEC_ESP_HDR_SIZE + IPSEC_ESP_IV_SIZE + padd_len + 2 ;
 
 	/* decapsulate the packet according the SA */
-	if(sa->enc_alg == IPSEC_3DES) {
-		/* get IV from SA */
-		memcpy(cbc_iv, iv, IPSEC_ESP_IV_SIZE);
-
+	if(sa->enc_alg == IPSEC_AES) {
 		/* encrypt ESP packet */
-		cipher_3des_cbc((__u8 *)packet, inner_len+padd_len+2, (__u8 *)sa->enckey, (__u8 *)&cbc_iv,
-						 DES_ENCRYPT, (__u8 *)packet);
+		aes_128_gcm_encrypt(get_default_aes_key(), get_default_aes_iv(), (__u8 *)packet, inner_len+padd_len+2, (__u8 *)packet, inner_len+padd_len+2,
+		                    auth_in, sizeof(auth_in), auth_tag, sizeof(auth_tag));
 	}
 
 	/* insert IV in fron of packet */
-	memcpy(((char*)packet) - IPSEC_ESP_IV_SIZE, iv, IPSEC_ESP_IV_SIZE);
+	memcpy(((char*)packet) - IPSEC_ESP_IV_SIZE, get_default_aes_iv(), IPSEC_ESP_IV_SIZE);
 
 	/* setup ESP header */
 	new_esp_header->spi = sa->spi;
@@ -349,13 +335,8 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	if(sa->auth_alg != 0) {
 		/* recalcualte ICV */
 		switch(sa->auth_alg) {
-			case IPSEC_HMAC_MD5:
-				hmac_md5((unsigned char *)new_esp_header, payload_len,
-						(unsigned char *)sa->authkey, IPSEC_AUTH_MD5_KEY_LEN, (unsigned char *)&digest);
-				break;
-			case IPSEC_HMAC_SHA1:
-				hmac_sha1((unsigned char *)new_esp_header, payload_len,
-						(unsigned char *)sa->authkey, IPSEC_AUTH_SHA1_KEY_LEN, (unsigned char *)&digest);
+			case IPSEC_HMAC_SHA256:
+				hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)new_esp_header, payload_len, (unsigned char *)&digest, 256);
 				break;
 			default:
 				IPSEC_LOG_ERR("ipsec_esp_encapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this ESP"));

@@ -54,12 +54,10 @@ COREFILES=$(LWIPDIR)/core/init.c \
 
 # IPSECFILES: IPSec protocol files
 IPSECFILES=$(LWIPDIR)/ipsec/core/ah.c \
-	$(LWIPDIR)/ipsec/core/ipsec_des.c \
 	$(LWIPDIR)/ipsec/core/esp.c \
 	$(LWIPDIR)/ipsec/core/ipsec.c \
-	$(LWIPDIR)/ipsec/core/ipsec_md5.c \
+	$(LWIPDIR)/ipsec/core/crypto.c \
 	$(LWIPDIR)/ipsec/core/sa.c \
-	$(LWIPDIR)/ipsec/core/ipsec_sha1.c \
 	$(LWIPDIR)/ipsec/core/util.c \
 	$(LWIPDIR)/ipsec/core/config.c \
 	$(LWIPDIR)/ipsec/core/ipsecdev.c

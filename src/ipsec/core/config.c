@@ -6,6 +6,10 @@ spd_entry outbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,2,   0,0,0,0,    192,168,1,3,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,3,   0,0,0,0,    192,168,1,2,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,2,   0,0,0,0,    192,168,1,3,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,3,   0,0,0,0,    192,168,1,2,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
     /* { SPD_ENTRY( ... ) },
@@ -17,6 +21,10 @@ spd_entry inbound_spd[IPSEC_MAX_SPD_ENTRIES] = {
     #if DUMMY_LOOPBACK_SA_SP
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
     { SPD_ENTRY( 127,0,0,1,   0,0,0,0,    127,0,0,1,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,2,   0,0,0,0,    192,168,1,3,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,3,   0,0,0,0,    192,168,1,2,  0,0,0,0,    IPSEC_PROTO_TCP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,2,   0,0,0,0,    192,168,1,3,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
+    { SPD_ENTRY( 192,168,1,3,   0,0,0,0,    192,168,1,2,  0,0,0,0,    IPSEC_PROTO_UDP,        0,          0,          POLICY_APPLY,           0) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
     { 0 }
     /* { SPD_ENTRY( ... ) },
@@ -32,9 +40,9 @@ sad_entry outbound_sad[IPSEC_MAX_SAD_ENTRIES] = {
         0x1010,                 /* Security Parameter Index     */
         IPSEC_PROTO_ESP,         /* IPSec Protocol (AH or ESP)   */
         IPSEC_TRANSPORT,        /* IPSec Mode                   */
-        IPSEC_3DES,             /* Encryption Algorithm (followed by encryption key bytes) */
+        IPSEC_AES,             /* Encryption Algorithm (followed by encryption key bytes) */
         0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67,
-        IPSEC_HMAC_MD5,         /* Authentication Algorithm (followed by authentication key bytes) */
+        IPSEC_HMAC_SHA256,         /* Authentication Algorithm (followed by authentication key bytes) */
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00
     ) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
@@ -51,9 +59,9 @@ sad_entry inbound_sad[IPSEC_MAX_SAD_ENTRIES] = {
         0x1010,                 /* Security Parameter Index     */
         IPSEC_PROTO_ESP,         /* IPSec Protocol (AH or ESP)   */
         IPSEC_TRANSPORT,        /* IPSec Mode                   */
-        IPSEC_3DES,             /* Encryption Algorithm (followed by encryption key bytes) */
+        IPSEC_AES,             /* Encryption Algorithm (followed by encryption key bytes) */
         0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67, 0x01, 0x23, 0x45, 0x67,
-        IPSEC_HMAC_MD5,         /* Authentication Algorithm (followed by authentication key bytes) */
+        IPSEC_HMAC_SHA256,         /* Authentication Algorithm (followed by authentication key bytes) */
         0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0xff,0x00,0x00,0x00,0x00
     ) },
     #endif /* DUMMY_LOOPBACK_SA_SP */
@@ -92,5 +100,13 @@ void sa_sp_db_init(void) {
     ipsec_spd_add_sa(&(db->outbound_spd.table[0]), &(db->outbound_sad.table[0]));
     ipsec_spd_add_sa(&(db->inbound_spd.table[1]), &(db->inbound_sad.table[0]));
     ipsec_spd_add_sa(&(db->outbound_spd.table[1]), &(db->outbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->inbound_spd.table[2]), &(db->inbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->outbound_spd.table[2]), &(db->outbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->inbound_spd.table[3]), &(db->inbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->outbound_spd.table[3]), &(db->outbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->inbound_spd.table[4]), &(db->inbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->outbound_spd.table[4]), &(db->outbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->inbound_spd.table[5]), &(db->inbound_sad.table[0]));
+    ipsec_spd_add_sa(&(db->outbound_spd.table[5]), &(db->outbound_sad.table[0]));
     #endif /* DUMMY_LOOPBACK_SA_SP */
 }

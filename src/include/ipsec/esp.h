@@ -45,8 +45,8 @@
 
 #include "ipsec/sa.h"
 
-#define IPSEC_MTU   (1400) 
-#define IPSEC_ESP_IV_SIZE		(8)			/**< Defines the size (in bytes) of the Initialization Vector used by DES and 3DES */
+#define IPSEC_MTU   (1400)
+#define IPSEC_ESP_IV_SIZE		(16)			/**< Defines the size (in bytes) of the Initialization Vector used by DES and 3DES */
 #define IPSEC_ESP_SPI_SIZE		(4)			/**< Defines the size (in bytes) of the SPI of an ESP packet */
 #define IPSEC_ESP_SEQ_SIZE		(4)			/**< Defines the size (in bytes) of the Sequence Number of an ESP packet */
 #define IPSEC_ESP_HDR_SIZE		(IPSEC_ESP_SPI_SIZE+IPSEC_ESP_SEQ_SIZE)	/**< Defines the size (in bytes) of the ESP header. Actually it defines just the size of the header which is located in */
@@ -68,7 +68,7 @@ typedef struct esp_packet_struct
 
 #pragma pack(pop)
 
-extern __u32 ipsec_esp_bitmap; 	
+extern __u32 ipsec_esp_bitmap;
 extern __u32 ipsec_esp_lastSeq;
 
 ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *len, sad_entry *sa) ;

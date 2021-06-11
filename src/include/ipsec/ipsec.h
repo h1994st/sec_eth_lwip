@@ -1,5 +1,5 @@
 /*
- * embedded IPsec	
+ * embedded IPsec
  * Copyright (c) 2003 Niklaus Schild and Christian Scheurer, HTI Biel/Bienne
  * All rights reserved.
  *
@@ -30,7 +30,7 @@
 /** @file ipsec.h
  *  @brief Header of embedded IPsec implementation
  *
- *  @author Christian Scheurer <http://www.christianscheurer.ch> 
+ *  @author Christian Scheurer <http://www.christianscheurer.ch>
  *
  *
  * This document is part of <EM>embedded IPsec<BR>
@@ -43,22 +43,24 @@
 #define __IPSEC_H__
 
 #include "sa.h"
+#include "util.h"
 
 /* Maximum space overhead for each IPSec algo */
-#define IPSEC_MAX_ESP_HLEN  58 /* 1(NEXT_HEADER) + 1(PAD_LEN) + 8(PADDING) + 12(ICV) + 20(NEW IP HEADER) + 8(ESP HEADER) + 8(IV) */
-#define IPSEC_MAX_AH_HLEN   44 /* 12(AH HEADER) + 12(ICV) + 20(NEW IP HEADER) */
+#define IPSEC_MAX_ESP_HLEN  94 /* 1(NEXT_HEADER) + 1(PAD_LEN) + 16(PADDING) + 32(ICV) + 20(NEW IP HEADER) + 8(ESP HEADER) + 16(IV) */
+#define IPSEC_MAX_AH_HLEN   64 /* 12(AH HEADER) + 32(ICV) + 20(NEW IP HEADER) */
 
 #define IPSEC_DES_KEY_LEN		(8)							    /* Defines the size of a DES key in bytes */
 #define IPSEC_3DES_KEY_LEN		(IPSEC_DES_KEY_LEN*3)		    /* Defines the length of a 3DES key in bytes */
 #define IPSEC_MAX_ENCKEY_LEN	(IPSEC_3DES_KEY_LEN)		    /* Defines the maximum encryption key length of our IPsec system */
-#define IPSEC_AUTH_ICV			(12)						    /* Defines the authentication key length in bytes (12 bytes for 96bit keys) */
+#define IPSEC_AUTH_ICV			(32)						    /* Defines the authentication key length in bytes (12 bytes for 96bit keys) */
 #define IPSEC_AUTH_MD5_KEY_LEN	(16)						    /* Length of MD5 secret key  */
 #define IPSEC_AUTH_SHA1_KEY_LEN	(20)						    /* Length of SHA1 secret key */
-#define IPSEC_MAX_AUTHKEY_LEN   (IPSEC_AUTH_SHA1_KEY_LEN) 	    /* Maximum length of authentication keys */
+#define IPSEC_AUTH_SHA256_KEY_LEN (24)
+#define IPSEC_MAX_AUTHKEY_LEN   (IPSEC_AUTH_SHA256_KEY_LEN) 	    /* Maximum length of authentication keys */
 #define IPSEC_MIN_IPHDR_SIZE	(20) 	                        /* Defines the minimum IP header size (in bytes).*/
 #define IPSEC_SEQ_MAX_WINDOW	(32)	                        /* Defines the maximum window for Sequence Number checks (used as anti-replay protection) */
 
 int ipsec_input_impl(unsigned char *packet, int packet_size, int *payload_offset, int *payload_size, db_set_netif *databases);
 int ipsec_output_impl(unsigned char *packet, int packet_size, int *payload_offset, int *payload_size, __u32 src, __u32 dst, spd_entry *spd);
 
-#endif 
+#endif

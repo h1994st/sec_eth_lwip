@@ -67,8 +67,7 @@
 #include "ipsec/debug.h"
 
 #include "ipsec/sa.h"
-#include "ipsec/md5.h"
-#include "ipsec/sha1.h"
+#include "ipsec/crypto.h"
 
 #include "ipsec/ah.h"
 
@@ -145,13 +144,8 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 
 	/* compute ICV */
 	switch(sa->auth_alg) {
-		case IPSEC_HMAC_MD5:
-			hmac_md5((unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len),
-			         (unsigned char *)sa->authkey, IPSEC_AUTH_MD5_KEY_LEN, (unsigned char *)&digest);
-			break;
-		case IPSEC_HMAC_SHA1:
-			hmac_sha1((unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len),
-			          (unsigned char *)sa->authkey, IPSEC_AUTH_SHA1_KEY_LEN, (unsigned char *)&digest);
+		case IPSEC_HMAC_SHA256:
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len), (unsigned char *)&digest, 256);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_ah_check", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this AH")) ;
@@ -283,11 +277,8 @@ int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int
 
 	/* calculate AH according the SA */
 	switch(sa->auth_alg) {
-		case IPSEC_HMAC_MD5:
-			hmac_md5((unsigned char*)new_ip_header, ipsec_ntohs(new_ip_header->len), sa->authkey, IPSEC_AUTH_MD5_KEY_LEN, digest);
-			break;
-		case IPSEC_HMAC_SHA1:
-			hmac_sha1((unsigned char*)new_ip_header, ipsec_ntohs(new_ip_header->len), sa->authkey, IPSEC_AUTH_SHA1_KEY_LEN, digest);
+		case IPSEC_HMAC_SHA256:
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char*)new_ip_header, ipsec_ntohs(new_ip_header->len), digest, 256);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_ah_encapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this AH") );

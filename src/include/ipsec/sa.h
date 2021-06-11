@@ -47,12 +47,12 @@
 #define IPSEC_MAX_SAD_ENTRIES	(10)	/**< Defines the size of SPD entries in the SPD table. */
 #define IPSEC_MAX_SPD_ENTRIES	(10)	/**< Defines the size of SAD entries in the SAD table. */
 
-#define IPSEC_FREE				(0)		/**< Tells you that an SPD entry is free */				
+#define IPSEC_FREE				(0)		/**< Tells you that an SPD entry is free */
 #define IPSEC_USED				(1)		/**< Tells you that an SPD entry is used */
 
 #define POLICY_APPLY			(0)		/**< Defines that the policy for this SPD entry means: apply IPsec */
 #define POLICY_BYPASS			(1)		/**< Defines that the policy for this SPD entry means: bypass IPsec */
-#define POLICY_DISCARD			(2)		/**< Defines that the policy for this SPD entry means: the packet must be discarded */			
+#define POLICY_DISCARD			(2)		/**< Defines that the policy for this SPD entry means: the packet must be discarded */
 
 #define IPSEC_TUNNEL			(1)		/**< Defines TUNNEL mode as the mode the packet must be processed */
 #define IPSEC_TRANSPORT			(2)		/**< Defines TRANSPORT mode as the mode the packet must be processed */
@@ -60,9 +60,11 @@
 #define IPSEC_DES				(1)		/**< Defines DES as the encryption algorithm for an ESP packet */
 #define IPSEC_3DES				(2)		/**< Defines 3DES as the encryption algorithm for an ESP packet */
 #define IPSEC_IDEA				(3)		/**< Defines IDEA as the encryption algorithm for an ESP packet */
+#define IPSEC_AES         (4)
 
 #define IPSEC_HMAC_MD5			(1)		/**< Defines HMAC-MD5 as the authentication algorithm for an AH or an ESP packet */
 #define IPSEC_HMAC_SHA1			(2)		/**< Defines HMAC-SHA1 as the authentication algorithm for an AH or an ESP packet */
+#define IPSEC_HMAC_SHA256        (3)
 
 #define IPSEC_NR_NETIFS			(1)		/**< Defines the number of network interfaces. This is used to reserve space for db_netif_struct's */
 
@@ -196,8 +198,8 @@ ipsec_status	ipsec_spd_release_dbs(db_set_netif *dbs) ;
 
 spd_entry *ipsec_spd_get_free(spd_table *table) ;
 
-spd_entry *ipsec_spd_add(__u32 src, __u32 src_net, __u32 dst, 
-                         __u32 dst_net, __u8 proto, __u16 src_port, 
+spd_entry *ipsec_spd_add(__u32 src, __u32 src_net, __u32 dst,
+                         __u32 dst_net, __u8 proto, __u16 src_port,
 						 __u16 dst_port, __u8 policy, spd_table *table) ;
 
 ipsec_status ipsec_spd_del(spd_entry *entry, spd_table *table) ;

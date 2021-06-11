@@ -1,5 +1,5 @@
 #include "ipsec/ipsecdev.h"
-
+#include "lwip/ip.h"
 
 struct orig_fns {
 	netif_input_fn orig_input;
@@ -9,7 +9,7 @@ struct orig_fns {
 
 static struct orig_fns orig_fns_data[256];
 
-static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
+err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
     struct orig_fns *data = orig_fns_data + inp->num;
     ipsec_ip_header* pkt;
     int ofs = 0;
@@ -71,7 +71,7 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
                 switch(spd->policy) {
                     case POLICY_APPLY:
                         IPSEC_LOG_AUD("ipsecdev_input", IPSEC_AUDIT_APPLY, ("POLICY_APPLY: got non-IPsec packet which should be one")) ;
-                        pbuf_free(p) ;
+                        ip_input(p, inp);
                         break;
                     case POLICY_DISCARD:
                         IPSEC_LOG_AUD("ipsecdev_input", IPSEC_AUDIT_DISCARD, ("POLICY_DISCARD: dropping packet")) ;
@@ -79,7 +79,8 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
                         break;
                     case POLICY_BYPASS:
                         IPSEC_LOG_AUD("ipsecdev_input", IPSEC_AUDIT_BYPASS, ("POLICY_BYPASS: forwarding packet to ip_input")) ;
-                        data->orig_input(p, inp);
+                        /* data->orig_input(p, inp); */
+                        ip_input(p, inp);
                         break;
                     default:
                         pbuf_free(p) ;
@@ -93,7 +94,7 @@ static err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
 	return ERR_OK;
 }
 
-static err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipaddr) {
+err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipaddr) {
     struct orig_fns *data = orig_fns_data + netif->num;
     spd_entry* relevant_sp;
     int ofs = 0;
@@ -191,11 +192,11 @@ void ipsecdev_add(struct netif* netif) {
 
     ethr = netif->flags & (NETIF_FLAG_ETHERNET | NETIF_FLAG_ETHARP);
 
-    if (netif->input) {
+    if (!ethr && netif->input) {
         data->orig_input = netif->input;
         netif->input = ipsecdev_input;
     }
-    if (!ethr && netif->output) {
+    if (netif->output) {
         data->orig_output = netif->output;
         netif->output = ipsecdev_output;
     }
