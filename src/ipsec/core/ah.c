@@ -103,8 +103,8 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 	int ret_val 	= IPSEC_STATUS_NOT_INITIALIZED;	/* by default, the return value is undefined */
 	ipsec_ah_header *ah_header;
 	int ah_len;
-	unsigned char orig_digest[IPSEC_MAX_AUTHKEY_LEN];
-	unsigned char digest[IPSEC_MAX_AUTHKEY_LEN];
+	unsigned char orig_digest[IPSEC_AUTH_ICV];
+	unsigned char digest[IPSEC_AUTH_ICV];
 
 	IPSEC_LOG_TRC(IPSEC_TRACE_ENTER,
 	              "ipsec_ah_check",
@@ -145,7 +145,7 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 	/* compute ICV */
 	switch(sa->auth_alg) {
 		case IPSEC_HMAC_SHA256:
-			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len), (unsigned char *)&digest, 256);
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len), (unsigned char *)&digest, 32);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_ah_check", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this AH")) ;
@@ -216,7 +216,7 @@ int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int
 						 sad_entry *sa, __u32 src, __u32 dst) {
 	ipsec_ip_header		*new_ip_header ;
 	ipsec_ah_header		*new_ah_header;
-	unsigned char 	 	digest[IPSEC_MAX_AUTHKEY_LEN];
+	unsigned char 	 	digest[IPSEC_AUTH_ICV];
 	__u16				orig_packet_size;
 	__u8				orig_tos; /* save mutable fields that are zeroed before ICV calculation */
 	__u8				orig_ttl; /* save mutable fields that are zeroed before ICV calculation */
@@ -278,7 +278,7 @@ int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int
 	/* calculate AH according the SA */
 	switch(sa->auth_alg) {
 		case IPSEC_HMAC_SHA256:
-			hmac_sha256(get_default_hmac_key(), 24, (unsigned char*)new_ip_header, ipsec_ntohs(new_ip_header->len), digest, 256);
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char*)new_ip_header, ipsec_ntohs(new_ip_header->len), digest, 32);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_ah_encapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this AH") );

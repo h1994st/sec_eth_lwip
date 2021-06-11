@@ -119,7 +119,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	ipsec_ip_header		*new_ip_packet;
 	esp_packet			*esp_header;
 	char 				cbc_iv[IPSEC_ESP_IV_SIZE];
-	unsigned char 		digest[IPSEC_MAX_AUTHKEY_LEN];
+	unsigned char 		digest[IPSEC_AUTH_ICV];
 	__u8		 		*end_ptr;
 	int					trailer_len = 2; /* at least two bytes: padLen + nextProtocol */
 	__u8				next_proto;
@@ -147,7 +147,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 		/* recalcualte ICV */
 		switch(sa->auth_alg) {
 		case IPSEC_HMAC_SHA256:
-			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)esp_header, payload_len-IPSEC_AUTH_ICV+IPSEC_ESP_HDR_SIZE, (unsigned char *)&digest, 256);
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)esp_header, payload_len-IPSEC_AUTH_ICV+IPSEC_ESP_HDR_SIZE, (unsigned char *)&digest, 32);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_esp_decapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this ESP")) ;
@@ -176,7 +176,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	}
 
 	/* decapsulate the packet according the SA */
-	if (sa->enc_alg == IPSEC_3DES) {
+	if (sa->enc_alg == IPSEC_AES) {
 		/* encrypt ESP packet */
 		aes_128_gcm_decrypt(get_default_aes_key(), get_default_aes_iv(),
 		                    ((unsigned char*)packet)+payload_offset + IPSEC_ESP_IV_SIZE, payload_len-IPSEC_ESP_IV_SIZE,
@@ -246,7 +246,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	__u8				padd;
 	ipsec_ip_header		*new_ip_header;
 	ipsec_esp_header	*new_esp_header;
-	unsigned char 		digest[IPSEC_MAX_AUTHKEY_LEN];
+	unsigned char 		digest[IPSEC_AUTH_ICV];
 	__u8				shift_len;
 	char* ori_ptr = (char*) packet;
 
@@ -336,7 +336,7 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 		/* recalcualte ICV */
 		switch(sa->auth_alg) {
 			case IPSEC_HMAC_SHA256:
-				hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)new_esp_header, payload_len, (unsigned char *)&digest, 256);
+				hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)new_esp_header, payload_len, (unsigned char *)&digest, 32);
 				break;
 			default:
 				IPSEC_LOG_ERR("ipsec_esp_encapsulate", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this ESP"));

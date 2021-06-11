@@ -22,12 +22,6 @@ int aes_128_gcm_encrypt(byte* key, byte* iv, byte* input, word32 size, byte* out
   int ret;
   word32 i;
 
-  output_size = ipsec_encrypt_len(size);
-  for (i = size; i < output_size; i++) {
-      /* pads the added characters with the number of pads */
-      input[i] = (output_size - size);
-  }
-
   ret = wc_AesGcmSetKey(&aes, key, AES_BLOCK_SIZE);
   if (ret != 0) {
     return ret;
@@ -55,11 +49,6 @@ int aes_128_gcm_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* out
   ret = wc_AesGcmDecrypt(&aes, output, input, size, iv, AES_BLOCK_SIZE, auth_tag, auth_tag_size, auth_in, auth_in_size);
   if (ret != 0) {
     return ret;
-  }
-
-  output_size = ipsec_decrypt_len(size, output);
-  for (i = output_size; i < size; i++) {
-    output[i] = 0;
   }
 
   return 0;

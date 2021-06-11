@@ -55,7 +55,7 @@
 #define IPSEC_AUTH_ICV			(32)						    /* Defines the authentication key length in bytes (12 bytes for 96bit keys) */
 #define IPSEC_AUTH_MD5_KEY_LEN	(16)						    /* Length of MD5 secret key  */
 #define IPSEC_AUTH_SHA1_KEY_LEN	(20)						    /* Length of SHA1 secret key */
-#define IPSEC_AUTH_SHA256_KEY_LEN (24)
+#define IPSEC_AUTH_SHA256_KEY_LEN (32)
 #define IPSEC_MAX_AUTHKEY_LEN   (IPSEC_AUTH_SHA256_KEY_LEN) 	    /* Maximum length of authentication keys */
 #define IPSEC_MIN_IPHDR_SIZE	(20) 	                        /* Defines the minimum IP header size (in bytes).*/
 #define IPSEC_SEQ_MAX_WINDOW	(32)	                        /* Defines the maximum window for Sequence Number checks (used as anti-replay protection) */

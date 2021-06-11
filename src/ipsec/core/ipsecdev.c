@@ -140,7 +140,7 @@ err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipa
             IPSEC_LOG_AUD("ipsecdev_output", IPSEC_AUDIT_APPLY, ("POLICY_APPLY: processing IPsec packet")) ;
 
             /* add space to pbuf for AH/ESP overhead */
-            space_overhead = relevant_sp->sa->protocol == IPSEC_PROTO_AH ? IPSEC_PROTO_AH : IPSEC_PROTO_ESP;
+            space_overhead = relevant_sp->sa->protocol == IPSEC_PROTO_AH ? IPSEC_MAX_AH_HLEN - IPSEC_MIN_IPHDR_SIZE : IPSEC_MAX_ESP_HLEN - IPSEC_MIN_IPHDR_SIZE;
             if (pbuf_add_header(p, space_overhead) != 0) {
                 IPSEC_LOG_ERR("ipsecdev_output", IPSEC_AUDIT_FAILURE, ("failed to add space for ESP data to pbuf"));
                 pbuf_free(p);
