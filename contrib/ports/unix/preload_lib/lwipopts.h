@@ -15,6 +15,10 @@
  * - No PPP support
  */
 
+typedef unsigned short int sa_family_t;
+#define SA_FAMILY_T_DEFINED
+#define LWIP_SOCKET_OFFSET         3
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0
 
@@ -43,7 +47,7 @@
 
 #define TCP_LISTEN_BACKLOG         1
 
-#define LWIP_COMPAT_SOCKETS        1
+#define LWIP_COMPAT_SOCKETS        0
 #define LWIP_SO_RCVTIMEO           1
 #define LWIP_SO_RCVBUF             1
 

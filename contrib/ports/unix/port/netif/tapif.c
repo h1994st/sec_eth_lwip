@@ -119,6 +119,7 @@ low_level_init(struct netif *netif)
   char buf[1024];
 #endif /* LWIP_IPV4 */
   char *preconfigured_tapif = getenv("PRECONFIGURED_TAPIF");
+  char *is_ip2 = getenv("IS_IP2");
 
   tapif = (struct tapif *)netif->state;
 
@@ -132,6 +133,10 @@ low_level_init(struct netif *netif)
   netif->hwaddr[4] = 0x78;
   netif->hwaddr[5] = 0xab;
   netif->hwaddr_len = 6;
+
+  if (is_ip2) {
+    netif->hwaddr[5] = 0xac;
+  }
 
   /* device capabilities */
   netif->flags = NETIF_FLAG_BROADCAST | NETIF_FLAG_ETHARP | NETIF_FLAG_IGMP;

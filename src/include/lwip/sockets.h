@@ -60,7 +60,7 @@ extern "C" {
 #endif
 
 /* sockaddr and pals include length fields */
-#define LWIP_SOCKET_HAVE_SA_LEN  1
+#define LWIP_SOCKET_HAVE_SA_LEN  0 /* !!!: disable this*/
 
 /* If your port already typedef's sa_family_t, define SA_FAMILY_T_DEFINED
    to prevent this code from redefining it. */
@@ -76,7 +76,9 @@ typedef u16_t in_port_t;
 #if LWIP_IPV4
 /* members are in network byte order */
 struct sockaddr_in {
+#if LWIP_SOCKET_HAVE_SA_LEN
   u8_t            sin_len;
+#endif
   sa_family_t     sin_family;
   in_port_t       sin_port;
   struct in_addr  sin_addr;
@@ -87,7 +89,9 @@ struct sockaddr_in {
 
 #if LWIP_IPV6
 struct sockaddr_in6 {
+#if LWIP_SOCKET_HAVE_SA_LEN
   u8_t            sin6_len;      /* length of this structure    */
+#endif
   sa_family_t     sin6_family;   /* AF_INET6                    */
   in_port_t       sin6_port;     /* Transport layer port #      */
   u32_t           sin6_flowinfo; /* IPv6 flow information       */
@@ -97,13 +101,17 @@ struct sockaddr_in6 {
 #endif /* LWIP_IPV6 */
 
 struct sockaddr {
+#if LWIP_SOCKET_HAVE_SA_LEN
   u8_t        sa_len;
+#endif
   sa_family_t sa_family;
   char        sa_data[14];
 };
 
 struct sockaddr_storage {
+#if LWIP_SOCKET_HAVE_SA_LEN
   u8_t        s2_len;
+#endif
   sa_family_t ss_family;
   char        s2_data1[2];
   u32_t       s2_data2[3];
@@ -198,6 +206,34 @@ struct ifreq {
 #define SOCK_DGRAM      2
 #define SOCK_RAW        3
 
+#if defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0
+
+#define SO_REUSEADDR   0x0002 /* Allow local address reuse */
+#define SO_KEEPALIVE   0x0009 /* keep connections alive */
+#define SO_BROADCAST   0x0006 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
+
+#define SO_DEBUG        0x0001 /* Unimplemented: turn on debugging info recording */
+#define SO_ACCEPTCONN   0x0030 /* socket has had listen() */
+#define SO_DONTROUTE    0x0005 /* Unimplemented: just use interface addresses */
+#define SO_USELOOPBACK  0x0040 /* Unimplemented: bypass hardware when possible */ /*TODO: no corresponding macro in Linux */
+#define SO_LINGER       0x0013 /* linger on close if data present */
+#define SO_DONTLINGER   ((int)(~SO_LINGER))
+#define SO_OOBINLINE    0x0010 /* Unimplemented: leave received OOB data in line */
+#define SO_REUSEPORT    0x0015 /* Unimplemented: allow local address & port reuse */
+#define SO_SNDBUF       0x0007 /* Unimplemented: send buffer size */
+#define SO_RCVBUF       0x0008 /* receive buffer size */
+#define SO_SNDLOWAT     0x0019 /* Unimplemented: send low-water mark */
+#define SO_RCVLOWAT     0x0018 /* Unimplemented: receive low-water mark */
+#define SO_SNDTIMEO     0x0021 /* send timeout */
+#define SO_RCVTIMEO     0x0020 /* receive timeout */
+#define SO_ERROR        0x0004 /* get error status and clear */
+#define SO_TYPE         0x0003 /* get socket type */
+#define SO_CONTIMEO     0x1009 /* Unimplemented: connect timeout */ /*TODO: no corresponding macro in Linux */
+#define SO_NO_CHECK     0x0011 /* don't create UDP checksum */
+#define SO_BINDTODEVICE 0x0025 /* bind to device */
+
+#else /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
+
 /*
  * Option flags per-socket. These must match the SOF_ flags in ip.h (checked in init.c)
  */
@@ -229,6 +265,8 @@ struct ifreq {
 #define SO_NO_CHECK     0x100a /* don't create UDP checksum */
 #define SO_BINDTODEVICE 0x100b /* bind to device */
 
+#endif /* !defined(LWIP_COMPAT_SOCKETS) || LWIP_COMPAT_SOCKETS != 0 */
+
 /*
  * Structure used for manipulating linger option.
  */
@@ -240,7 +278,11 @@ struct linger {
 /*
  * Level number for (get/set)sockopt() to apply to socket itself.
  */
+#if defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0
+#define SOL_SOCKET 0x1 /* !!!: for compatibility */
+#else /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
 #define  SOL_SOCKET  0xfff    /* options for socket level */
+#endif /* !defined(LWIP_COMPAT_SOCKETS) || LWIP_COMPAT_SOCKETS != 0 */
 
 
 #define AF_UNSPEC       0

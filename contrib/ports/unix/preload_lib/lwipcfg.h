@@ -10,7 +10,7 @@
 /*#define PACKET_LIB_GET_ADAPTER_NETADDRESS(addr) IP4_ADDR((addr), 192,168,1,0)*/
 /*#define PACKET_LIB_QUIET*/
 
-/* #define USE_PCAPIF 1 */
+#define LWIP_PORT_INIT_IPADDR2(addr)   IP4_ADDR((addr), 192,168,1,201)
 #define LWIP_PORT_INIT_IPADDR(addr)   IP4_ADDR((addr), 192,168,1,200)
 #define LWIP_PORT_INIT_GW(addr)       IP4_ADDR((addr), 192,168,1,1)
 #define LWIP_PORT_INIT_NETMASK(addr)  IP4_ADDR((addr), 255,255,255,0)

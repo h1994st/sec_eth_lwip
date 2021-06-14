@@ -28,6 +28,8 @@
 /* include the port-dependent configuration */
 #include "lwipcfg.h"
 
+#include "socket_overrides.h"
+
 #ifndef LWIP_EXAMPLE_APP_ABORT
 #define LWIP_EXAMPLE_APP_ABORT() 0
 #endif
@@ -87,6 +89,8 @@ preload_netif_init(void)
   ip4_addr_t ipaddr, netmask, gw;
 #endif /* LWIP_IPV4 && USE_ETHERNET */
 
+  char *is_ip2 = getenv("IS_IP2");
+
 #if USE_ETHERNET
 #if LWIP_IPV4
   ip4_addr_set_zero(&gw);
@@ -94,7 +98,11 @@ preload_netif_init(void)
   ip4_addr_set_zero(&netmask);
 #if USE_ETHERNET_TCPIP
   LWIP_PORT_INIT_GW(&gw);
-  LWIP_PORT_INIT_IPADDR(&ipaddr);
+  if (!is_ip2) {
+    LWIP_PORT_INIT_IPADDR(&ipaddr);
+  } else {
+    LWIP_PORT_INIT_IPADDR2(&ipaddr);
+  }
   LWIP_PORT_INIT_NETMASK(&netmask);
   printf("Starting lwIP, local interface IP is %s\n", ip4addr_ntoa(&ipaddr));
 #endif /* USE_ETHERNET_TCPIP */
@@ -154,6 +162,8 @@ __attribute__((constructor))
 static void lwip_ctor(void) {
   err_t err;
   sys_sem_t init_sem;
+
+  lwip_compat_init();
 
   err = sys_sem_new(&init_sem, 0);
   LWIP_ASSERT("failed to create init_sem", err == ERR_OK);

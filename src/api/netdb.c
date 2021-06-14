@@ -393,7 +393,9 @@ lwip_getaddrinfo(const char *nodename, const char *servname,
     /* set up sockaddr */
     inet_addr_from_ip4addr(&sa4->sin_addr, ip_2_ip4(&addr));
     sa4->sin_family = AF_INET;
+#if LWIP_SOCKET_HAVE_SA_LEN
     sa4->sin_len = sizeof(struct sockaddr_in);
+#endif
     sa4->sin_port = lwip_htons((u16_t)port_nr);
     ai->ai_family = AF_INET;
 #endif /* LWIP_IPV4 */

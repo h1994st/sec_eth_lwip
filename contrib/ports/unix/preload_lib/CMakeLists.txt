@@ -22,11 +22,11 @@ set (LWIP_INCLUDE_DIRS
 include(${LWIP_CONTRIB_DIR}/ports/unix/Filelists.cmake)
 include(${LWIP_DIR}/src/Filelists.cmake)
 
-add_library(lwip_preload lwip_preload.c ${lwipnoapps_SRCS} ${lwipcontribportunix_SRCS} ${lwipcontribportunixnetifs_SRCS})
+add_library(lwip_preload lwip_preload.c socket_overrides.c ${lwipnoapps_SRCS} ${lwipcontribportunix_SRCS} ${lwipcontribportunixnetifs_SRCS})
 target_compile_options(lwip_preload PRIVATE ${LWIP_COMPILER_FLAGS})
 target_compile_definitions(lwip_preload PRIVATE ${LWIP_DEFINITIONS} ${LWIP_MBEDTLS_DEFINITIONS})
 target_include_directories(lwip_preload PRIVATE ${LWIP_INCLUDE_DIRS} ${LWIP_MBEDTLS_INCLUDE_DIRS})
-target_link_libraries(lwip_preload ${LWIP_SANITIZER_LIBS})
+target_link_libraries(lwip_preload ${LWIP_SANITIZER_LIBS} -ldl)
 
 find_library(LIBPTHREAD pthread)
 target_link_libraries(lwip_preload ${LIBPTHREAD})

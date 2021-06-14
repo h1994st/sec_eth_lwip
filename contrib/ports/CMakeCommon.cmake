@@ -43,7 +43,7 @@ set(LWIP_COMPILER_FLAGS_GNU_CLANG
     $<$<CONFIG:Debug>:-g>
     $<$<CONFIG:Release>:-O3>
     -Wall
-    -pedantic
+    # -pedantic
     -Werror
     -Wparentheses
     -Wsequence-point
@@ -67,7 +67,8 @@ set(LWIP_COMPILER_FLAGS_GNU_CLANG
 
 if (NOT LWIP_HAVE_MBEDTLS)
     list(APPEND LWIP_COMPILER_FLAGS_GNU_CLANG
-        -Wredundant-decls
+        # socket APIs are redundantly defined in both lwip and Linux -- h1994st
+        # -Wredundant-decls
         $<$<COMPILE_LANGUAGE:C>:-Wc++-compat>
     )
 endif()
