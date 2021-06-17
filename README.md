@@ -101,7 +101,7 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
 
 1. Follow [previous steps](#setup-tuntap-interface) to set up ***two*** tap devices
 
-2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware the correct routing of received packets.
+2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware of the correct routing of received packets.
 
     ```bash
     ip addr add 192.168.1.200/24 dev tap0
