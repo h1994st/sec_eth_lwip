@@ -50,8 +50,9 @@
  * Copyright (c) 2003 Niklaus Schild and Christian Scheurer, HTI Biel/Bienne<BR>
  * All rights reserved.</EM><HR>
  */
+#include "lwip/opt.h"
 
-
+#if defined(EIPS) && EIPS == 1
 
 #include "ipsec/debug.h"
 
@@ -255,3 +256,5 @@ int ipsec_output_impl(unsigned char *packet, int packet_size, int *payload_offse
 	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_output", ("ret_val=%d", ret_val) );
 	return ret_val;
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

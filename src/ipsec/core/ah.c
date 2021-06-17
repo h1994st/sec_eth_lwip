@@ -44,11 +44,11 @@
  *  <pre>
  *                                  | pointer to packet header
  *     ____________________________\/_____________________________
- *    |          �       �         �                              |
- *    | Ethernet � newIP � AH, ICV �   original (inner) packet    |
- *    |__________�_______�_________�______________________________|
- *    �                            �
- *    �<-- room for new headers -->�
+ *    |          |       |         |                              |
+ *    | Ethernet | newIP | AH, ICV |   original (inner) packet    |
+ *    |__________|_______|_________|______________________________|
+ *    |                            |
+ *    |<-- room for new headers -->|
  *  </pre>
  *
  * This document is part of <EM>embedded IPsec<BR>
@@ -58,6 +58,9 @@
  * portions Copyright (c) 1998-2003 OpenSSL (www.openssl.org)
  *</EM><HR>
  */
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
 
 #include <string.h>
 #include <assert.h>
@@ -303,3 +306,5 @@ int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int
 	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_ah_encapsulate", ("return = %d", IPSEC_STATUS_SUCCESS) );
 	return IPSEC_STATUS_SUCCESS;
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

@@ -60,15 +60,13 @@ set(lwipcore_SRCS
 # IPSec files -- by zqzqz
 set(lwipipsec_SRCS
     ${LWIP_DIR}/src/ipsec/core/ah.c
-	${LWIP_DIR}/src/ipsec/core/ipsec_des.c
+    ${LWIP_DIR}/src/ipsec/core/config.c
+    ${LWIP_DIR}/src/ipsec/core/crypto.c
 	${LWIP_DIR}/src/ipsec/core/esp.c
 	${LWIP_DIR}/src/ipsec/core/ipsec.c
-	${LWIP_DIR}/src/ipsec/core/ipsec_md5.c
+    ${LWIP_DIR}/src/ipsec/core/ipsecdev.c
 	${LWIP_DIR}/src/ipsec/core/sa.c
-	${LWIP_DIR}/src/ipsec/core/ipsec_sha1.c
 	${LWIP_DIR}/src/ipsec/core/util.c
-	${LWIP_DIR}/src/ipsec/core/config.c
-	${LWIP_DIR}/src/ipsec/core/ipsecdev.c
 )
 # TODO: add MACsec -- by h1994st
 set(lwipcore4_SRCS

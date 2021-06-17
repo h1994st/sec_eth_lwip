@@ -42,6 +42,10 @@
 #ifndef __IPSEC_DEBUG_H__
 #define __IPSEC_DEBUG_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include <stdio.h>
 #include "ipsec/util.h"
 
@@ -179,4 +183,6 @@
 	#define IPSEC_DUMP_BUFFER(__prefix__, __buffer__, __offset__, __length__)
 #endif
 
-#endif
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#endif /* __IPSEC_DEBUG_H__ */

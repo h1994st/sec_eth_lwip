@@ -42,10 +42,16 @@
 #ifndef __IPSEC_H__
 #define __IPSEC_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "sa.h"
 #include "util.h"
 
 int ipsec_input_impl(unsigned char *packet, int packet_size, int *payload_offset, int *payload_size, db_set_netif *databases);
 int ipsec_output_impl(unsigned char *packet, int packet_size, int *payload_offset, int *payload_size, __u32 src, __u32 dst, spd_entry *spd);
 
-#endif
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#endif /* __IPSEC_H__ */

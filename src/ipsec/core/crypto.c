@@ -1,3 +1,7 @@
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include <wolfssl/options.h>
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/hmac.h>
@@ -54,15 +58,15 @@ int aes_128_gcm_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* out
   return 0;
 }
 
-byte* get_default_aes_key() {
+byte* get_default_aes_key(void) {
   return default_aes_key;
 }
 
-byte* get_default_aes_iv() {
+byte* get_default_aes_iv(void) {
   return default_aes_iv;
 }
 
-byte* get_default_hmac_key() {
+byte* get_default_hmac_key(void) {
   return default_hmac_key;
 }
 
@@ -96,6 +100,8 @@ word32 ipsec_decrypt_len(word32 size, byte* output) {
   return length;
 }
 
-word32 ipsec_hash_len() {
+word32 ipsec_hash_len(void) {
   return SHA256_DIGEST_SIZE;
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

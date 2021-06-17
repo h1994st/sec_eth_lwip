@@ -41,6 +41,10 @@
 #ifndef __SA_H__
 #define __SA_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "ipsec/types.h"
 #include "ipsec/util.h"
 
@@ -231,4 +235,6 @@ ipsec_status ipsec_spd_flush(spd_table *table, spd_entry *def_entry) ;
 
 ipsec_status ipsec_sad_flush(sad_table *table) ;
 
-#endif
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#endif /* __SA_H__ */

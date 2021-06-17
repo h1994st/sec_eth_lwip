@@ -60,9 +60,9 @@
 #include LWIP_HOOK_FILENAME
 #endif
 
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
 #include "ipsec/ipsecdev.h"
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
 
 const struct eth_addr ethbroadcast = {{0xff, 0xff, 0xff, 0xff, 0xff, 0xff}};
 const struct eth_addr ethzero = {{0, 0, 0, 0, 0, 0}};
@@ -187,11 +187,11 @@ ethernet_input(struct pbuf *p, struct netif *netif)
         goto free_and_return;
       } else {
         /* pass to IP layer */
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
           ipsecdev_input(p, netif);
 #else
           ip4_input(p, netif);
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
       }
       break;
 

@@ -43,6 +43,10 @@
 #ifndef __AH_H__
 #define __AH_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "ipsec/sa.h"
 #include "ipsec/util.h"
 
@@ -51,7 +55,7 @@
 
 #pragma pack(push, 1)
 
-typedef struct ah_hdr_struct 
+typedef struct ah_hdr_struct
 {
   __u8	nexthdr;	/**< type of next payload (protocol nr) */
   __u8	len;		/**< length of all AH data in 32-bit units (minus 64 bits for IPv6 compat) */
@@ -69,6 +73,6 @@ extern __u32 ipsec_ah_lastSeq;			/**< last seen sequence number, used for anit-r
 int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payload_size, sad_entry *sa);
 int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int *payload_size, sad_entry *sa, __u32 src, __u32 dst);
 
-#endif
+#endif /* defined(EIPS) && EIPS == 1 */
 
-
+#endif /* __AH_H__ */

@@ -77,6 +77,9 @@
  * portions Copyright (c) 1998-2003 OpenSSL (www.openssl.org)
  *</EM><HR>
  */
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
 
 #include <string.h>
 
@@ -1107,3 +1110,5 @@ ipsec_status ipsec_sad_flush(sad_table *table)
 
 	return IPSEC_STATUS_SUCCESS ;
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

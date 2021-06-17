@@ -1,3 +1,7 @@
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "ipsec/ipsecdev.h"
 #include "lwip/ip.h"
 
@@ -205,3 +209,5 @@ void ipsecdev_add(struct netif* netif) {
         netif->linkoutput = ipsecdev_linkoutput;
     }
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

@@ -43,6 +43,10 @@
 #ifndef __ESP_H__
 #define __ESP_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "ipsec/sa.h"
 
 #define IPSEC_MTU   (1400)
@@ -74,5 +78,6 @@ extern __u32 ipsec_esp_lastSeq;
 ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *len, sad_entry *sa) ;
 ipsec_status ipsec_esp_encapsulate(ipsec_ip_header *packet, int *offset, int *len, sad_entry *sa, __u32 src_addr, __u32 dest_addr) ;
 
+#endif /* defined(EIPS) && EIPS == 1 */
 
-#endif
+#endif /* __ESP_H__ */

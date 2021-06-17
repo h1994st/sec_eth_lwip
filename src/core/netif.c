@@ -78,13 +78,13 @@
 #include "util/pcap.h"
 #endif /* PCAP_DBG_FLAG */
 
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
 #include "ipsec/ipsecdev.h"
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
 
-#if MACSEC /* by zqzqz */
+#if defined(MACSEC) && MACSEC == 1 /* by zqzqz */
 #include "macsec/macsec.h"
-#endif /* MACSEC */
+#endif /* defined(MACSEC) && MACSEC == 1 */
 
 #if LWIP_AUTOIP
 #include "lwip/autoip.h"
@@ -197,13 +197,13 @@ netif_loopif_init(struct netif *netif)
   pcap_dump_add(&netif, PCAP_DBG_FILE);
 #endif /* PCAP_DBG_FLAG */
 
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
   ipsecdev_add(netif);
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
 
-#if MACSEC /* by zqzqz */
+#if defined(MACSEC) && MACSEC == 1 /* by zqzqz */
   macsecdev_add(netif);
-#endif /* MACSEC */
+#endif /* defined(MACSEC) && MACSEC == 1 */
 
   return ERR_OK;
 }
@@ -1331,7 +1331,7 @@ netif_poll(struct netif *netif)
     MIB2_STATS_NETIF_ADD(stats_if, ifinoctets, in->tot_len);
     MIB2_STATS_NETIF_INC(stats_if, ifinucastpkts);
 
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
     if (netif->input(in, netif) != ERR_OK) {
       pbuf_free(in);
     }
@@ -1340,7 +1340,7 @@ netif_poll(struct netif *netif)
     if (ip_input(in, netif) != ERR_OK) {
       pbuf_free(in);
     }
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
 
     SYS_ARCH_PROTECT(lev);
   }

@@ -43,6 +43,10 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include "ipsec/types.h"
 
 /* Maximum space overhead for each IPSec algo */
@@ -113,4 +117,6 @@ __u16 ipsec_ip_chksum(void *dataptr, __u16 len);
 
 void debug_print_hex(char *p, size_t len);
 
-#endif
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#endif /* __UTIL_H__ */

@@ -48,9 +48,9 @@
 #include "lwip/netif.h"
 #include "lwip/prot/ip4.h"
 
-#if EIPS /* by zqzqz */
+#if defined(EIPS) && EIPS == 1 /* by zqzqz */
 #include "ipsec/config.h"
-#endif /* EIPS */
+#endif /* defined(EIPS) && EIPS == 1 */
 
 #ifdef __cplusplus
 extern "C" {

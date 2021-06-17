@@ -52,6 +52,10 @@
  * Copyright (c) 2001, 2002 Swedish Institute of Computer Science.<BR>
  * All rights reserved.</EM><HR>
  */
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -499,3 +503,5 @@ void debug_print_hex(char *p, size_t len) {
   }
   printf("\n");
 }
+
+#endif /* defined(EIPS) && EIPS == 1 */

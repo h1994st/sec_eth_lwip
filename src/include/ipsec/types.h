@@ -43,7 +43,11 @@
 #ifndef __IPSEC_TYPES_H__
 #define __IPSEC_TYPES_H__
 
-#include "stdint.h"
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
+
+#include <stdint.h>
 
 typedef uint8_t		__u8;
 typedef int8_t		__s8;
@@ -135,4 +139,7 @@ typedef struct ipsec_udp_hdr_struct
 } ipsec_udp_header ;
 
 #pragma pack(pop)
-#endif
+
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#endif /* __IPSEC_TYPES_H__ */

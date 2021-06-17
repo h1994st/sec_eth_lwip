@@ -43,11 +43,11 @@
  *  <pre>
  *                              | pointer to packet header
  *     ________________________\/________________________________________________
- *    |          �       �      �                             � padd       � ev. |
- *    | Ethernet � newIP � ESP  �   original (inner) packet   � next-proto � ICV |
- *    |__________�_______�______�_____________________________�____________�_____|
- *    �                         �                             �                  �
- *    �<-room for new headers-->�                             �<-   room tail  ->�
+ *    |          |       |      |                             | padd       | ev. |
+ *    | Ethernet | newIP | ESP  |   original (inner) packet   | next-proto | ICV |
+ *    |__________|_______|______|_____________________________|____________|_____|
+ *    |                         |                             |                  |
+ *    |<-room for new headers-->|                             |<-   room tail  ->|
  *  </pre>
  *
  * This document is part of <EM>embedded IPsec<BR>
@@ -57,6 +57,9 @@
  * portions Copyright (c) 1998-2003 OpenSSL (www.openssl.org)
  *</EM><HR>
  */
+#include "lwip/opt.h"
+
+#if defined(EIPS) && EIPS == 1
 
 #include <string.h>
 #include <assert.h>
@@ -378,3 +381,5 @@ ipsec_status ipsec_esp_decapsulate(ipsec_ip_header *packet, int *offset, int *le
 	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_esp_encapsulate", ("return = %d", IPSEC_STATUS_SUCCESS) );
 	return IPSEC_STATUS_SUCCESS;
  }
+
+#endif /* defined(EIPS) && EIPS == 1 */
