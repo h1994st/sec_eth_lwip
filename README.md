@@ -101,6 +101,17 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
 
 1. Follow [previous steps](#setup-tuntap-interface) to set up ***two*** tap devices
 
+    ```bash
+    sudo ip tuntap add dev tap0 mode tap user `whoami`
+    sudo ip link set tap0 up
+    sudo ip tuntap add dev tap0 mode tap user `whoami`
+    sudo ip link set tap1 up
+    sudo ip link add lwipbridge type bridge
+    sudo ip link set tap0 master lwipbridge
+    sudo ip addr add 192.168.1.1/24 dev lwipbridge
+    sudo ip link set dev lwipbridge up
+    ```
+
 2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware of the correct routing of received packets.
 
     ```bash
