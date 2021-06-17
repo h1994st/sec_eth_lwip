@@ -73,3 +73,45 @@ status_callback==UP, local interface IP is 192.168.1.200
 ```
 
 Then, open the browser and enter [192.168.1.200](http://192.168.1.200)
+
+## Build `lwip_preload` Hook Library
+
+```bash
+cd contrib/ports/unix/preload_lib
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Run Programs
+
+```bash
+# IP: 192.168.1.200
+PRECONFIGURED_TAPIF=tap0 LD_PRELOAD=liblwip_preload.so <your program>
+
+# IP: 192.168.1.201
+# need to add tap1
+IS_IP2=1 PRECONFIGURED_TAPIF=tap1 LD_PRELOAD=liblwip_preload.so <your program>
+```
+
+### Communication between Two Tap Devices
+
+Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://github.com/h1994st/SecEthernetDev/tree/master/can_udp)
+
+1. Follow [previous steps](#setup-tuntap-interface) to set up ***two*** tap devices
+
+2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware the correct routing of received packets.
+
+    ```bash
+    ip addr add 192.168.1.200/24 dev tap0
+    ip addr add 192.168.1.201/24 dev tap1
+    ```
+
+3. Run `udp_client` and `udp_server`
+
+    ```bash
+    PRECONFIGURED_TAPIF=tap0 LD_PRELOAD=/path/to/liblwip_preload.so ./udp_server
+
+    IS_IP2=1 PRECONFIGURED_TAPIF=tap1 LD_PRELOAD=/path/to/liblwip_preload.so ./udp_client -b /path/to/can_frames.pcap
+    ```
