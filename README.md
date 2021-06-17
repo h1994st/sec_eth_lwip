@@ -104,7 +104,7 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
     ```bash
     sudo ip tuntap add dev tap0 mode tap user `whoami`
     sudo ip link set tap0 up
-    sudo ip tuntap add dev tap0 mode tap user `whoami`
+    sudo ip tuntap add dev tap1 mode tap user `whoami`
     sudo ip link set tap1 up
     sudo ip link add lwipbridge type bridge
     sudo ip link set tap0 master lwipbridge
