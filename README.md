@@ -115,3 +115,9 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
 
     IS_IP2=1 PRECONFIGURED_TAPIF=tap1 LD_PRELOAD=/path/to/liblwip_preload.so ./udp_client -b /path/to/can_frames.pcap
     ```
+
+## Run `ipsec_app`
+
+```bash
+bash test_ipsec.sh
+```

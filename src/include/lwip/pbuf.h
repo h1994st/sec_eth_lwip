@@ -82,6 +82,14 @@ extern "C" {
 #define PBUF_IP_HLEN        20
 #endif
 
+/* IPSec adds a maximum of 24B assuming 96-bit ICV (12B AH header + 12B ICV) */
+#if EIPS /* by zqzqz */
+#include "ipsec/ipsec.h"
+#define PBUF_IPSEC_HLEN     IPSEC_MAX_ESP_HLEN /* ESP requires the most possible space for IPSec */
+#else
+#define PBUF_IPSEC_HLEN     0
+#endif /* EIPS */
+
 /**
  * @ingroup pbuf
  * Enumeration of pbuf layers
@@ -90,11 +98,11 @@ typedef enum {
   /** Includes spare room for transport layer header, e.g. UDP header.
    * Use this if you intend to pass the pbuf to functions like udp_send().
    */
-  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN + PBUF_TRANSPORT_HLEN,
+  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN + PBUF_IPSEC_HLEN + PBUF_TRANSPORT_HLEN,
   /** Includes spare room for IP header.
    * Use this if you intend to pass the pbuf to functions like raw_send().
    */
-  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN,
+  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IPSEC_HLEN + PBUF_IP_HLEN,
   /** Includes spare room for link layer header (ethernet header).
    * Use this if you intend to pass the pbuf to functions like ethernet_output().
    * @see PBUF_LINK_HLEN
@@ -318,6 +326,9 @@ void pbuf_put_at(struct pbuf* p, u16_t offset, u8_t data);
 u16_t pbuf_memcmp(const struct pbuf* p, u16_t offset, const void* s2, u16_t n);
 u16_t pbuf_memfind(const struct pbuf* p, const void* mem, u16_t mem_len, u16_t start_offset);
 u16_t pbuf_strstr(const struct pbuf* p, const char* substr);
+
+/* by zqzqz */
+void debug_print_pbuf(const struct pbuf *p);
 
 #ifdef __cplusplus
 }

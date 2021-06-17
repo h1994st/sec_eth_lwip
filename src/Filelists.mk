@@ -49,7 +49,25 @@ COREFILES=$(LWIPDIR)/core/init.c \
 	$(LWIPDIR)/core/tcp_in.c \
 	$(LWIPDIR)/core/tcp_out.c \
 	$(LWIPDIR)/core/timeouts.c \
-	$(LWIPDIR)/core/udp.c
+	$(LWIPDIR)/core/udp.c \
+	$(LWIPDIR)/core/util/pcap.c
+
+# IPSECFILES: IPSec protocol files -- by zqzqz
+IPSECFILES=$(LWIPDIR)/ipsec/core/ah.c \
+	$(LWIPDIR)/ipsec/core/esp.c \
+	$(LWIPDIR)/ipsec/core/ipsec.c \
+	$(LWIPDIR)/ipsec/core/crypto.c \
+	$(LWIPDIR)/ipsec/core/sa.c \
+	$(LWIPDIR)/ipsec/core/util.c \
+	$(LWIPDIR)/ipsec/core/config.c \
+	$(LWIPDIR)/ipsec/core/ipsecdev.c
+
+# MACSECFILES: MacSec protocol files -- by zqzqz
+MACSECFILES=$(LWIPDIR)/macsec/macsec.c \
+  $(LWIPDIR)/macsec/util.c \
+	$(LWIPDIR)/macsec/config.c \
+	$(LWIPDIR)/macsec/api.c \
+	$(LWIPDIR)/macsec/crypto.c
 
 CORE4FILES=$(LWIPDIR)/core/ipv4/acd.c \
 	$(LWIPDIR)/core/ipv4/autoip.c \
@@ -127,13 +145,15 @@ PPPFILES=$(LWIPDIR)/netif/ppp/auth.c \
 	$(LWIPDIR)/netif/ppp/polarssl/sha1.c
 
 # LWIPNOAPPSFILES: All LWIP files without apps
-LWIPNOAPPSFILES=$(COREFILES) \
+LWIPFILES=$(COREFILES) \
 	$(CORE4FILES) \
 	$(CORE6FILES) \
 	$(APIFILES) \
 	$(NETIFFILES) \
 	$(PPPFILES) \
-	$(SIXLOWPAN)
+	$(SIXLOWPAN) \
+	$(IPSECFILES) \
+	$(MACSECFILES)
 
 # SNMPFILES: SNMPv2c agent
 SNMPFILES=$(LWIPDIR)/apps/snmp/snmp_asn1.c \
@@ -205,4 +225,5 @@ LWIPAPPFILES=$(SNMPFILES) \
 	$(NETBIOSNSFILES) \
 	$(TFTPFILES) \
 	$(MQTTFILES) \
-	$(MBEDTLS_FILES)
+	$(MBEDTLS_FILES) \
+	$(IPSECFILES)

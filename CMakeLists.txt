@@ -5,7 +5,7 @@ set (CMAKE_CONFIGURATION_TYPES "Debug;Release")
 project(lwIP)
 
 # Example lwIP application
-set(LWIP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set (LWIP_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 set (LWIP_DEFINITIONS LWIP_DEBUG=1)
 

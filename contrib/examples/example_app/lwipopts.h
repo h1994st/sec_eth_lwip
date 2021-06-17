@@ -36,6 +36,13 @@
 #include "lwipopts_test.h"
 #else /* LWIP_OPTTEST_FILE */
 
+/* by zqzqz */
+#define MEMP_USE_CUSTOM_POOLS 0
+#define MEM_USE_POOLS 0
+#define EIPS 0
+#define DUMMY_LOOPBACK_SA_SP 0
+#define MACSEC 0
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0
 

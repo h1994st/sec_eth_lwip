@@ -1022,11 +1022,15 @@ ip4_output_if_opt_src(struct pbuf *p, const ip4_addr_t *src, const ip4_addr_t *d
      ) {
     /* Packet to self, enqueue it for loopback */
     LWIP_DEBUGF(IP_DEBUG, ("netif_loop_output()"));
-    return netif_loop_output(netif, p);
+    /* need to double check the following line -- by h1994st */
+    /* return netif_loop_output(netif, p); */
+    return netif->output(netif, p, dest);
   }
 #if LWIP_MULTICAST_TX_OPTIONS
   if ((p->flags & PBUF_FLAG_MCASTLOOP) != 0) {
-    netif_loop_output(netif, p);
+    /* need to double check the following line -- by h1994st */
+    /* netif_loop_output(netif, p); */
+    netif->output(netif, p, dest);
   }
 #endif /* LWIP_MULTICAST_TX_OPTIONS */
 #endif /* ENABLE_LOOPBACK */
