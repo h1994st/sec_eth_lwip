@@ -115,8 +115,8 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
 2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware of the correct routing of received packets.
 
     ```bash
-    ip addr add 192.168.1.200/24 dev tap0
-    ip addr add 192.168.1.201/24 dev tap1
+    sudo ip addr add 192.168.1.200/24 dev tap0
+    sudo ip addr add 192.168.1.201/24 dev tap1
     ```
 
 3. Run `udp_client` and `udp_server`
