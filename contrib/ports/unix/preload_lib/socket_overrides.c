@@ -211,12 +211,12 @@ int setsockopt(int s, int level, int optname, const void *optval, socklen_t optl
 }
 
 int connect(int s, const struct sockaddr *name, socklen_t namelen) {
-    LWIP_FD_DEBUG("fd(%d) start to connect \n", s);
-
     if (lwip_sock_inited && s > LWIP_FD_BASE) {
         s -= LWIP_FD_BASE;
+        LWIP_FD_DEBUG("lwip fd(%d) start to connect \n", s);
         return lwip_connect(s, name, namelen);
     } else {
+        LWIP_FD_DEBUG("linux fd(%d) start to connect \n", s);
         return real_connect(s, name, namelen);
     }
 }

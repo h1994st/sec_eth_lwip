@@ -108,6 +108,7 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
     sudo ip link set tap1 up
     sudo ip link add lwipbridge type bridge
     sudo ip link set tap0 master lwipbridge
+    sudo ip link set tap1 master lwipbridge
     sudo ip addr add 192.168.1.1/24 dev lwipbridge
     sudo ip link set dev lwipbridge up
     ```
