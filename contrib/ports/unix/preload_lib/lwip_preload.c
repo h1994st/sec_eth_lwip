@@ -61,8 +61,6 @@ static void init_default_netif(const ip4_addr_t *ipaddr, const ip4_addr_t *netma
 {
   netif_add(&netif, ipaddr, netmask, gw, NULL, tapif_init, tcpip_input);
 
-  printf("init_default_netif, netif->num=%d\n", netif.num);
-
 #if defined(EIPS) && EIPS == 1
   ipsecdev_add(&netif);
 #endif /* defined(EIPS) && EIPS == 1 */
