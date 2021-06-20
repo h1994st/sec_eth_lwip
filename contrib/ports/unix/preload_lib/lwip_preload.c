@@ -24,6 +24,12 @@
 
 #include "lwip/ip_addr.h"
 #include "netif/tapif.h"
+#if defined(EIPS) && EIPS == 1
+#include "ipsec/ipsecdev.h"
+#endif /* defined(EIPS) && EIPS == 1 */
+#if defined(MACSEC) && MACSEC == 1
+#include "macsec/macsec.h"
+#endif /* defined(MACSEC) && MACSEC == 1 */
 
 /* include the port-dependent configuration */
 #include "lwipcfg.h"
@@ -54,6 +60,17 @@ static struct netif netif;
 static void init_default_netif(const ip4_addr_t *ipaddr, const ip4_addr_t *netmask, const ip4_addr_t *gw)
 {
   netif_add(&netif, ipaddr, netmask, gw, NULL, tapif_init, tcpip_input);
+
+  printf("init_default_netif, netif->num=%d\n", netif.num);
+
+#if defined(EIPS) && EIPS == 1
+  ipsecdev_add(&netif);
+#endif /* defined(EIPS) && EIPS == 1 */
+
+#if defined(MACSEC) && MACSEC == 1
+  macsecdev_add(&netif);
+#endif /* defined(MACSEC) && MACSEC == 1 */
+
   netif_set_default(&netif);
 }
 

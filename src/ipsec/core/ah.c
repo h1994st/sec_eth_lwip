@@ -119,9 +119,9 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 	ah_header = ((ipsec_ah_header*)((unsigned char*)outer_packet + IPSEC_MIN_IPHDR_SIZE));
 	ah_len = (ah_header->len << 2) + 8;  /* Add 8 bytes per RFC 4302 2.2 */
 
-	/* AH header is expected to be 24 bytes since we support only 96 bit authentication values  */
+	/* AH header is expected to be 44 bytes since we support only 256 bit authentication values  */
 	if (ah_len != IPSEC_AH_HDR_SIZE + IPSEC_AUTH_ICV) {
-		IPSEC_LOG_DBG("ipsec_ah_check", IPSEC_STATUS_FAILURE, ("wrong AH header size: ah_len=%d (must be 24 bytes, only 96bit authentication values allowed)", ah_len) );
+		IPSEC_LOG_DBG("ipsec_ah_check", IPSEC_STATUS_FAILURE, ("wrong AH header size: ah_len=%d (must be 44 bytes, only 256bit authentication values allowed)", ah_len) );
 		IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_ah_check", ("return = %d", IPSEC_STATUS_FAILURE) );
 		return IPSEC_STATUS_FAILURE;
 	}
@@ -191,7 +191,7 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 		outer_packet->chksum = ipsec_ip_chksum(outer_packet, IPSEC_MIN_IPHDR_SIZE);
 	}
 
-	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_ah_check", ("return = %d", IPSEC_STATUS_NOT_IMPLEMENTED) );
+	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsec_ah_check", ("return = %d", IPSEC_STATUS_SUCCESS) );
 	return IPSEC_STATUS_SUCCESS;
 }
 
@@ -255,7 +255,8 @@ int ipsec_ah_encapsulate(ipsec_ip_header *inner_packet, int *payload_offset, int
 
 	/* set AH header fields */
 	new_ah_header->nexthdr = sa->mode == IPSEC_TUNNEL ? 0x04 : inner_packet->protocol;
-	new_ah_header->len = 0x04; /* length is 4 for AH with 96bit ICV */
+	/* new_ah_header->len = 0x04; ** length is 4 for AH with 96bit ICV */
+	new_ah_header->len = 0x09; /* length is 4 for AH with 256bit ICV, for SHA256 */
 	new_ah_header->reserved = 0x0000;
 	new_ah_header->spi = sa->spi;
 	new_ah_header->sequence = ipsec_htonl(sa->sequence_number);

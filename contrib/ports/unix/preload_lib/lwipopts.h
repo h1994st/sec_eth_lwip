@@ -18,6 +18,13 @@
 typedef unsigned short int sa_family_t;
 #define SA_FAMILY_T_DEFINED
 #define LWIP_SOCKET_OFFSET         3
+/* Avoid pbuf chain */
+#define LWIP_NETIF_TX_SINGLE_PBUF 1
+
+/* IPsec */
+#define EIPS 1
+/* MACsec */
+#define MACSEC 0
 
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0

@@ -5,6 +5,8 @@
 
 #if defined(EIPS) && EIPS == 1
 
+#include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/types.h>
 
 byte* get_default_aes_key(void);

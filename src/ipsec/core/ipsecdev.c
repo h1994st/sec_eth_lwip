@@ -21,8 +21,10 @@ err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
     int retcode = IPSEC_STATUS_NOT_INITIALIZED;
     spd_entry* spd;
 
+    /*
     printf("Inside IPSecdev INPUT\n");
     printf("input in\n");debug_print_pbuf(p);
+     */
 
     /* check packet has data */
     if (p == NULL || p->payload == NULL) {
@@ -55,8 +57,12 @@ err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
                     pbuf_free(p);
                 }
                 IPSEC_LOG_MSG("ipsecdev_input", ("fwd decapsulated IPsec packet"));
-                printf("input out\n");debug_print_pbuf(p);
-                return data->orig_input(p, inp);
+                /* printf("input out\n");debug_print_pbuf(p); */
+                if (data->orig_input) {
+                    return data->orig_input(p, inp);
+                } else {
+                    return ip_input(p, inp);
+                }
             } else {
                 IPSEC_LOG_ERR("ipsecdev_input",
                               retcode,
@@ -69,7 +75,8 @@ err_t ipsecdev_input(struct pbuf* p, struct netif *inp) {
             spd = ipsec_spd_lookup(pkt, &db->inbound_spd) ;
             if (spd == NULL) {
                 IPSEC_LOG_ERR("ipsecdev_input", IPSEC_STATUS_NO_POLICY_FOUND, ("no matching SPD policy found")) ;
-                data->orig_input(p, inp);
+                /* data->orig_input(p, inp); */
+                ip_input(p, inp);
                 /*pbuf_free(p);*/
             } else {
                 switch(spd->policy) {
@@ -108,8 +115,10 @@ err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipa
     ipsec_ip_header* hdr = (ipsec_ip_header*)p->payload;
     int space_overhead = 0;
 
+    /*
     printf("Inside IPSecdev OUTPUT\n");
     printf("output in\n");debug_print_pbuf(p);
+     */
 
     /* chained pbuf check */
 	if(p->next != NULL) {
@@ -162,7 +171,7 @@ err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipa
                     IPSEC_LOG_ERR("ipsecdev_output", IPSEC_AUDIT_FAILURE, ("failed to remove unnecessary IPSec space"));
                 }
                 IPSEC_LOG_MSG("ipsec_output", ("fwd IPsec packet to HW mapped device") );
-                printf("output out\n");debug_print_pbuf(p);
+                /* printf("output out\n");debug_print_pbuf(p); */
                 data->orig_output(netif, p, ipaddr);
             } else {
                 IPSEC_LOG_ERR("ipsec_output", status, ("error on ipsec_output() processing"));
@@ -175,8 +184,8 @@ err_t ipsecdev_output(struct netif* netif, struct pbuf* p, const ip4_addr_t *ipa
             IPSEC_LOG_AUD("ipsecdev_output", IPSEC_AUDIT_BYPASS, ("POLICY_BYPASS: forwarding packet to ip_output")) ;
             return data->orig_output(netif, p, ipaddr);
         default:
-            IPSEC_LOG_ERR("ipsecdev_input", IPSEC_STATUS_FAILURE, ("POLICY_DIRCARD: dropping packet")) ;
-            IPSEC_LOG_AUD("ipsecdev_input", IPSEC_AUDIT_FAILURE, ("unknown Security Policy: dropping packet")) ;
+            IPSEC_LOG_ERR("ipsecdev_output", IPSEC_STATUS_FAILURE, ("POLICY_DIRCARD: dropping packet")) ;
+            IPSEC_LOG_AUD("ipsecdev_output", IPSEC_AUDIT_FAILURE, ("unknown Security Policy: dropping packet")) ;
     }
 	IPSEC_LOG_TRC(IPSEC_TRACE_RETURN, "ipsecdev_output", ("return = %d", ERR_CONN) );
 	return ERR_CONN;

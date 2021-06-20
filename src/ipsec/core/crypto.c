@@ -3,6 +3,7 @@
 #if defined(EIPS) && EIPS == 1
 
 #include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/hmac.h>
 #include <wolfssl/wolfcrypt/sha256.h>
@@ -24,14 +25,18 @@ int aes_128_gcm_encrypt(byte* key, byte* iv, byte* input, word32 size, byte* out
                                byte* auth_in, word32 auth_in_size, byte* auth_tag, word32 auth_tag_size) {
   Aes aes;
   int ret;
-  word32 i;
+
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
+  }
 
   ret = wc_AesGcmSetKey(&aes, key, AES_BLOCK_SIZE);
   if (ret != 0) {
     return ret;
   }
 
-  ret = wc_AesGcmEncrypt(&aes, output, input, output_size, iv, AES_BLOCK_SIZE, auth_tag, auth_tag_size, auth_in, auth_in_size);
+  ret = wc_AesGcmEncrypt(&aes, output, input, size, iv, AES_BLOCK_SIZE, auth_tag, auth_tag_size, auth_in, auth_in_size);
   if (ret != 0) {
     return ret;
   }
@@ -43,7 +48,11 @@ int aes_128_gcm_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* out
                                byte* auth_in, word32 auth_in_size, byte* auth_tag, word32 auth_tag_size) {
   Aes aes;
   int ret;
-  word32 i;
+
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
+  }
 
   ret = wc_AesGcmSetKey(&aes, key, AES_BLOCK_SIZE);
   if (ret != 0) {
@@ -73,7 +82,8 @@ byte* get_default_hmac_key(void) {
 int hmac_sha256(byte* key, word32 key_size, byte* input, word32 input_size, byte* output, word32 output_size) {
   Hmac hmac;
 
-  wc_HmacSetKey(&hmac, SHA256, key, key_size);
+  wc_HmacInit(&hmac, NULL, INVALID_DEVID);
+  wc_HmacSetKey(&hmac, WC_SHA256, key, key_size);
   wc_HmacUpdate(&hmac, input, input_size);
   wc_HmacFinal(&hmac, output);
 }
