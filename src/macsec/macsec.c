@@ -1,3 +1,9 @@
+#include "lwip/opt.h"
+
+#if defined(MACSEC) && MACSEC == 1
+
+#include <string.h>
+
 #include "macsec/macsec.h"
 #include "macsec/debug.h"
 #include "macsec/types.h"
@@ -18,39 +24,32 @@ static err_t macsec_input_check(struct pbuf* p) {
 
     /* chained pbuf check */
 	if(p->next != NULL) {
-  		MACSEC_LOG_DBG("macsec_decode_check",
-                      MACSEC_STATUS_NOT_IMPLEMENTED,
+  		MACSEC_LOG_DBG("macsec_input_check",
+                      MACSEC_STATUS_DATA_SIZE_ERROR,
                       ("can not handle chained pbuf"));
-        return MACSEC_STATUS_NOT_IMPLEMENTED;
+        return ERR_CONN;
 	}
 
     /* pbuf reference check */
     if(p->ref != 1) {
-  		MACSEC_LOG_DBG("macsec_decode_check",
-                      MACSEC_STATUS_NOT_IMPLEMENTED,
+  		MACSEC_LOG_DBG("macsec_input_check",
+                      MACSEC_STATUS_DATA_SIZE_ERROR,
                       ("can not handle pbuf->ref != 1 - p->ref == %d", p->ref));
-		return MACSEC_STATUS_NOT_IMPLEMENTED;
+		return ERR_CONN;
 	}
-
-    /* only works for pbuf.payload allocated in RAM */
-    if (!pbuf_match_allocsrc(p, PBUF_RAM)) {
-  		MACSEC_LOG_DBG("macsec_decode_check",
-                      MACSEC_STATUS_NOT_IMPLEMENTED,
-                      ("can not handle pbuf alloc mode other than PBUF_RAM"));
-		return MACSEC_STATUS_NOT_IMPLEMENTED;
-    }
 
     /* must be MACsec encoded frame */
     if (macsec_hdr->type != ETH_MACSEC) {
-		return MACSEC_STATUS_NOT_IMPLEMENTED;
+		return ERR_CONN;
     }
 
-    return MACSEC_STATUS_SUCCESS;
+    return ERR_OK;
 }
 
 static err_t macsec_output_check(struct pbuf* p) {
     ethernet_header* eth_hdr;
     eth_hdr = (ethernet_header*) p->payload;
+    LWIP_UNUSED_ARG(eth_hdr);
 
     /* chained pbuf check */
 	if(p->next != NULL) {
@@ -68,14 +67,6 @@ static err_t macsec_output_check(struct pbuf* p) {
 		return MACSEC_STATUS_NOT_IMPLEMENTED;
 	}
 
-    /* only works for pbuf.payload allocated in RAM */
-    if (!pbuf_match_allocsrc(p, PBUF_RAM)) {
-  		MACSEC_LOG_DBG("macsec_encode_check",
-                      MACSEC_STATUS_NOT_IMPLEMENTED,
-                      ("can not handle pbuf alloc mode other than PBUF_RAM"));
-		return MACSEC_STATUS_NOT_IMPLEMENTED;
-    }
-
     /* Update: no restriction on eth type */
     /* since our tests all work on IPV4, only process IPV4 */
     /*
@@ -91,45 +82,46 @@ static err_t macsec_output_check(struct pbuf* p) {
 
 static err_t macsec_input_impl(struct pbuf* p) {
     u16_t old_len, new_len;
-    void *old_payload, *new_payload;
+    void *old_payload;
     err_t err;
+
+    /*
     printf("enter macsec decode\n");
     debug_print_pbuf(p);
+     */
 
     /* fetch info from original pbuf */
     old_len = p->tot_len;
     old_payload = p->payload;
 
-    /* calculate the length of MACsec packet */
-    new_len = macsec_decode_length(old_payload, old_len);
-
     /* build the new packet */
-    new_payload = mem_malloc(new_len);
-    err = macsec_decode(old_payload, old_len, new_payload, &new_len);
+    err = macsec_decode(old_payload, old_len, &new_len);
     if (err != MACSEC_STATUS_SUCCESS) {
-        mem_free(new_payload);
         return err;
     }
 
     /* replace the packet */
-    p->payload = new_payload;
+    p->payload = ((u8_t*)old_payload) + MACSEC_SECTAG_LEN;
     p->tot_len = new_len;
     p->len = new_len;
-    /* TODO: how to free this mem safely?
-    mem_free(old_payload);
-    */
 
+    /*
     printf("leave macsec decode\n");
     debug_print_pbuf(p);
+     */
+
     return MACSEC_STATUS_SUCCESS;
 }
 
 static err_t macsec_output_impl(struct pbuf* p) {
     u16_t old_len, new_len;
-    void *old_payload, *new_payload, *extended_payload;
+    void *old_payload;
     err_t err;
+
+    /*
     printf("enter macsec encode\n");
     debug_print_pbuf(p);
+     */
 
     /* fetch info from original pbuf */
     old_len = p->tot_len;
@@ -139,26 +131,21 @@ static err_t macsec_output_impl(struct pbuf* p) {
     new_len = macsec_encode_length(old_payload, old_len);
 
     /* build the new packet */
-    extended_payload = mem_malloc(new_len);
-    memcpy(extended_payload, old_payload, old_len);
-    new_payload = mem_malloc(new_len);
-    err = macsec_encode(extended_payload, old_len, new_payload, &new_len);
-    mem_free(extended_payload);
+    err = macsec_encode(old_payload, old_len, &new_len);
     if (err != MACSEC_STATUS_SUCCESS) {
-        mem_free(new_payload);
         return err;
     }
 
     /* replace the packet */
-    p->payload = new_payload;
+    p->payload = ((u8_t*)old_payload) - MACSEC_SECTAG_LEN - MACSEC_ICV_LEN;
     p->tot_len = new_len;
     p->len = new_len;
-    /* TODO: how to free this mem safely?
-    mem_free(old_payload);
-    */
 
+    /*
     printf("leave macsec encode\n");
     debug_print_pbuf(p);
+     */
+
     return MACSEC_STATUS_SUCCESS;
 }
 
@@ -224,3 +211,5 @@ void macsecdev_add(struct netif* netif) {
         }
     }
 }
+
+#endif /* defined(MACSEC) && MACSEC == 1 */

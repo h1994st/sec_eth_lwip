@@ -68,7 +68,15 @@ set(lwipipsec_SRCS
 	${LWIP_DIR}/src/ipsec/core/sa.c
 	${LWIP_DIR}/src/ipsec/core/util.c
 )
-# TODO: add MACsec -- by h1994st
+# MACsec -- by h1994st
+set(lwipmacsec_SRCS
+    ${LWIP_DIR}/src/macsec/api.c
+    ${LWIP_DIR}/src/macsec/config.c
+    ${LWIP_DIR}/src/macsec/crypto.c
+	${LWIP_DIR}/src/macsec/macsec.c
+	${LWIP_DIR}/src/macsec/util.c
+)
+
 set(lwipcore4_SRCS
     ${LWIP_DIR}/src/core/ipv4/acd.c
     ${LWIP_DIR}/src/core/ipv4/autoip.c
@@ -247,6 +255,7 @@ set(lwipnoapps_SRCS
     ${lwipsixlowpan_SRCS}
     ${lwipppp_SRCS}
     ${lwipipsec_SRCS}
+    ${lwipmacsec_SRCS}
 )
 
 # LWIPAPPFILES: All LWIP APPs

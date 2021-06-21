@@ -90,6 +90,13 @@ extern "C" {
 #define PBUF_IPSEC_HLEN     0
 #endif /* defined(EIPS) && EIPS == 1 */
 
+#if defined(MACSEC) && MACSEC == 1 /* by h1994st */
+#include "macsec/config.h"
+#define PBUF_MACSEC_HLEN MACSEC_MAX_HLEN
+#else
+#define PBUF_MACSEC_HLEN     0
+#endif /* defined(MACSEC) && MACSEC == 1 */
+
 /**
  * @ingroup pbuf
  * Enumeration of pbuf layers
@@ -98,16 +105,16 @@ typedef enum {
   /** Includes spare room for transport layer header, e.g. UDP header.
    * Use this if you intend to pass the pbuf to functions like udp_send().
    */
-  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN + PBUF_IPSEC_HLEN + PBUF_TRANSPORT_HLEN,
+  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_MACSEC_HLEN + PBUF_IP_HLEN + PBUF_IPSEC_HLEN + PBUF_TRANSPORT_HLEN,
   /** Includes spare room for IP header.
    * Use this if you intend to pass the pbuf to functions like raw_send().
    */
-  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IPSEC_HLEN + PBUF_IP_HLEN,
+  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_MACSEC_HLEN + PBUF_IPSEC_HLEN + PBUF_IP_HLEN,
   /** Includes spare room for link layer header (ethernet header).
    * Use this if you intend to pass the pbuf to functions like ethernet_output().
    * @see PBUF_LINK_HLEN
    */
-  PBUF_LINK = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN,
+  PBUF_LINK = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_MACSEC_HLEN,
   /** Includes spare room for additional encapsulation header before ethernet
    * headers (e.g. 802.11).
    * Use this if you intend to pass the pbuf to functions like netif->linkoutput().

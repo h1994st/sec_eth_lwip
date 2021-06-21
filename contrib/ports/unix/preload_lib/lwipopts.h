@@ -22,9 +22,9 @@ typedef unsigned short int sa_family_t;
 #define LWIP_NETIF_TX_SINGLE_PBUF 1
 
 /* IPsec */
-#define EIPS 1
+#define EIPS 0
 /* MACsec */
-#define MACSEC 0
+#define MACSEC 1
 
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0

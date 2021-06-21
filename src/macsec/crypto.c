@@ -1,4 +1,9 @@
+#include "lwip/opt.h"
+
+#if defined(MACSEC) && MACSEC == 1
+
 #include <wolfssl/options.h>
+#include <wolfssl/wolfcrypt/settings.h>
 #include <wolfssl/wolfcrypt/aes.h>
 #include <wolfssl/wolfcrypt/sha256.h>
 #include <wolfssl/wolfcrypt/random.h>
@@ -16,6 +21,11 @@ static int aes_128_cbc_encrypt(byte* key, byte* iv, byte* input, word32 size, by
   Aes aes;
   int ret;
   word32 i;
+
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
+  }
 
   *output_size = macsec_encrypt_len(size);
   for (i = size; i < *output_size; i++) {
@@ -41,6 +51,11 @@ static int aes_128_cbc_decrypt(byte* key, byte* iv, byte* input, word32 size, by
   int ret;
   word32 i;
 
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
+  }
+
   ret = wc_AesSetKey(&aes, key, AES_BLOCK_SIZE, iv, AES_DECRYPTION);
   if (ret != 0) {
     return ret;
@@ -63,20 +78,20 @@ static int aes_128_gcm_encrypt(byte* key, byte* iv, byte* input, word32 size, by
                                byte* auth_in, word32 auth_in_size, byte* auth_tag, word32 auth_tag_size) {
   Aes aes;
   int ret;
-  word32 i;
 
-  *output_size = macsec_encrypt_len(size);
-  for (i = size; i < *output_size; i++) {
-      /* pads the added characters with the number of pads */
-      input[i] = (*output_size - size);
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
   }
+
+  *output_size = size;
 
   ret = wc_AesGcmSetKey(&aes, key, AES_BLOCK_SIZE);
   if (ret != 0) {
     return ret;
   }
 
-  ret = wc_AesGcmEncrypt(&aes, output, input, *output_size, iv, AES_BLOCK_SIZE, auth_tag, auth_tag_size, auth_in, auth_in_size);
+  ret = wc_AesGcmEncrypt(&aes, output, input, size, iv, AES_BLOCK_SIZE, auth_tag, auth_tag_size, auth_in, auth_in_size);
   if (ret != 0) {
     return ret;
   }
@@ -88,7 +103,11 @@ static int aes_128_gcm_decrypt(byte* key, byte* iv, byte* input, word32 size, by
                                byte* auth_in, word32 auth_in_size, byte* auth_tag, word32 auth_tag_size) {
   Aes aes;
   int ret;
-  word32 i;
+
+  ret = wc_AesInit(&aes, NULL, INVALID_DEVID);
+  if (ret != 0) {
+    return ret;
+  }
 
   ret = wc_AesGcmSetKey(&aes, key, AES_BLOCK_SIZE);
   if (ret != 0) {
@@ -100,19 +119,16 @@ static int aes_128_gcm_decrypt(byte* key, byte* iv, byte* input, word32 size, by
     return ret;
   }
 
-  *output_size = macsec_decrypt_len(size, output);
-  for (i = *output_size; i < size; i++) {
-    output[i] = 0;
-  }
+  *output_size = size;
 
   return 0;
 }
 
-byte* get_default_key() {
+byte* get_default_key(void) {
   return default_key;
 }
 
-byte* get_default_iv() {
+byte* get_default_iv(void) {
   return default_iv;
 }
 
@@ -161,3 +177,5 @@ int macsec_decrypt(byte* key, byte* iv, byte* input, word32 size, byte* output, 
     return -1;
   }
 }
+
+#endif /* defined(MACSEC) && MACSEC == 1 */

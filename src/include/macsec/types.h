@@ -1,7 +1,11 @@
 #ifndef __MACSEC_TYPES_H__
 #define __MACSEC_TYPES_H__
 
-#include "stdint.h"
+#include "lwip/opt.h"
+
+#if defined(MACSEC) && MACSEC == 1
+
+#include <stdint.h>
 
 typedef uint8_t		__u8;
 typedef int8_t		__s8;
@@ -80,5 +84,7 @@ typedef struct macsec_hdr_struct
 } macsec_header;
 
 #pragma pack(pop)
+
+#endif /* defined(MACSEC) && MACSEC == 1 */
 
 #endif
