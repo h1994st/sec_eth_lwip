@@ -148,7 +148,7 @@ int ipsec_ah_check(ipsec_ip_header *outer_packet, int *payload_offset, int *payl
 	/* compute ICV */
 	switch(sa->auth_alg) {
 		case IPSEC_HMAC_SHA256:
-			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len), (unsigned char *)&digest, 32);
+			hmac_sha256(get_default_hmac_key(), 24, (unsigned char *)outer_packet, ipsec_ntohs(outer_packet->len), (unsigned char *)digest, 32);
 			break;
 		default:
 			IPSEC_LOG_ERR("ipsec_ah_check", IPSEC_STATUS_FAILURE, ("unknown HASH algorithm for this AH")) ;

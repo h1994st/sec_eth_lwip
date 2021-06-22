@@ -24,7 +24,10 @@ typedef unsigned short int sa_family_t;
 /* IPsec */
 #define EIPS 0
 /* MACsec */
-#define MACSEC 1
+#define MACSEC 0
+/* Gatekeeper */
+#define LWIP_GATEKEEPER 1
+#define LWIP_GK_ROLE 0 /* 0: sender, 1: receiver */
 
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0

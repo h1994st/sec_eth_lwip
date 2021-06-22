@@ -76,7 +76,13 @@ set(lwipmacsec_SRCS
 	${LWIP_DIR}/src/macsec/macsec.c
 	${LWIP_DIR}/src/macsec/util.c
 )
-
+# Gatekeeper -- by h1994st
+set(lwipgatekeeper_SRCS
+    ${LWIP_DIR}/src/gatekeeper/gatekeeper.c
+    ${LWIP_DIR}/src/gatekeeper/gk_sender.c
+    ${LWIP_DIR}/src/gatekeeper/gk_receiver.c
+    ${LWIP_DIR}/src/gatekeeper/gk_crypto.c
+)
 set(lwipcore4_SRCS
     ${LWIP_DIR}/src/core/ipv4/acd.c
     ${LWIP_DIR}/src/core/ipv4/autoip.c
@@ -256,6 +262,7 @@ set(lwipnoapps_SRCS
     ${lwipppp_SRCS}
     ${lwipipsec_SRCS}
     ${lwipmacsec_SRCS}
+    ${lwipgatekeeper_SRCS}
 )
 
 # LWIPAPPFILES: All LWIP APPs
