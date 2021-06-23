@@ -33,6 +33,8 @@ static err_t handle_proof_packets(struct pbuf* p, struct netif *inp, netif_input
     struct gk_pbuf_entry *pbuf_entry;
     struct elem *e;
 
+    printf("received proof packet!\n");
+
     /* retrieve the stored pbuf */
     /* proof_hdr->pkt_hash */
     old_pbuf = NULL;
@@ -68,6 +70,7 @@ static err_t handle_proof_packets(struct pbuf* p, struct netif *inp, netif_input
     mem_free(pbuf_entry);
 
     /* delivery the packet to the upper layer */
+    printf("processing stored packet!\n");
     input_fn(old_pbuf, inp);
     /* TODO: do we need to free `old_pbuf` here? */
 
@@ -113,6 +116,7 @@ err_t gk_input_impl(struct pbuf* p, struct netif *inp, netif_input_fn input_fn) 
             memcpy(pbuf_entry->pkt_hash, data, 32);
             pbuf_entry->p = p;
             list_push(&pbuf_list, pbuf_entry);
+            printf("stored the received packet!\n");
 
             return -100; /* stored */
         }

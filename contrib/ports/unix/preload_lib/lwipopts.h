@@ -22,12 +22,25 @@ typedef unsigned short int sa_family_t;
 #define LWIP_NETIF_TX_SINGLE_PBUF 1
 
 /* IPsec */
+#ifndef EIPS
 #define EIPS 0
+#endif /* EIPS */
+
 /* MACsec */
+#ifndef MACSEC
 #define MACSEC 0
+#endif /* MACSEC */
+
 /* Gatekeeper */
-#define LWIP_GATEKEEPER 1
+#ifndef LWIP_GATEKEEPER
+#define LWIP_GATEKEEPER 0
+#endif /* LWIP_GATEKEEPER */
+
+#if LWIP_GATEKEEPER == 1
+#ifndef LWIP_GK_ROLE
 #define LWIP_GK_ROLE 0 /* 0: sender, 1: receiver */
+#endif /* LWIP_GK_ROLE */
+#endif /* LWIP_GATEKEEPER == 1 */
 
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0

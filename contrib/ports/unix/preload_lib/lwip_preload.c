@@ -30,6 +30,9 @@
 #if defined(MACSEC) && MACSEC == 1
 #include "macsec/macsec.h"
 #endif /* defined(MACSEC) && MACSEC == 1 */
+#if defined(LWIP_GATEKEEPER) && LWIP_GATEKEEPER == 1
+#include "gatekeeper/gatekeeper.h"
+#endif /* defined(LWIP_GATEKEEPER) && LWIP_GATEKEEPER == 1 */
 
 /* include the port-dependent configuration */
 #include "lwipcfg.h"
@@ -68,6 +71,10 @@ static void init_default_netif(const ip4_addr_t *ipaddr, const ip4_addr_t *netma
 #if defined(MACSEC) && MACSEC == 1
   macsecdev_add(&netif);
 #endif /* defined(MACSEC) && MACSEC == 1 */
+
+#if defined(LWIP_GATEKEEPER) && LWIP_GATEKEEPER == 1
+  gkdev_add(&netif);
+#endif /* defined(LWIP_GATEKEEPER) && LWIP_GATEKEEPER == 1 */
 
   netif_set_default(&netif);
 }

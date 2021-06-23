@@ -10,7 +10,15 @@
 #include "gatekeeper/gk_config.h"
 #include "gatekeeper/gk_crypto.h"
 
-static uint8_t hmac_key[GK_SENDER_MAC_LEN] = { 0 };
+#ifdef LWIP_GK_ROLE
+#if LWIP_GK_ROLE == 0 /* sender */
+static uint8_t hmac_key[GK_SENDER_MAC_LEN] = { 0x00 };
+#elif LWIP_GK_ROLE == 1 /* receiver */
+static uint8_t hmac_key[GK_SENDER_MAC_LEN] = { 0x01 };
+#else
+#error "Unsupported LWIP_GK_ROLE"
+#endif /* LWIP_GK_ROLE */
+#endif /* LWIP_GK_ROLE */
 static Hmac gk_hmac;
 static Sha256 gk_hash;
 
