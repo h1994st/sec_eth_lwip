@@ -92,6 +92,14 @@ cmake ..
 make
 ```
 
+References about raw socket and its configurations:
+
+- https://iplab.naist.jp/class/2018/materials/hands-on/layer-2-raw-socket/
+- https://gist.github.com/austinmarton/1922600
+- https://gist.github.com/austinmarton/2862515
+- https://github.com/h1994st/raw-socket-tutorial/blob/master/raw_socket_icmp_ping.c
+- https://man7.org/linux/man-pages/man7/netdevice.7.html
+
 ### Run Programs
 
 The program will automatically configure MAC and IP addresses, based on the provided interface.
@@ -105,6 +113,8 @@ PRECONFIGURED_RAWIF=<network interafce> LD_PRELOAD=liblwip_preload.so <your prog
 ```
 
 ### Communication between Two Tap Devices
+
+Communication between two tap devices require special configurations. First, two tap devices should be connected using a bridge device. Second, two tap devices should be assigned with IP addresses so that the kernel will handle packets to upper layers accordingly.
 
 Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://github.com/h1994st/SecEthernetDev/tree/master/can_udp)
 
