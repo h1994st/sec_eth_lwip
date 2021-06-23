@@ -2,7 +2,11 @@
 
 This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/blob/7ec4e9be304e7f8953740f10b2c810a292e89449)
 
-## Build `lwip`
+## Example application
+
+Location: [contrib/examples/example_app](contrib/examples/example_app)
+
+### Build `lwip`
 
 1. Create `lwipcfg.h` under `contrib/examples/example_app` directory
 
@@ -34,7 +38,7 @@ This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/b
     make
     ```
 
-## Setup Tun/Tap Interface
+### Setup Tun/Tap Interface
 
 ```bash
 sudo ip tuntap add dev tap0 mode tap user `whoami`
@@ -50,14 +54,14 @@ Reference:
 - <https://github.com/lwip-tcpip/lwip/blob/7ec4e9be304e7f8953740f10b2c810a292e89449/contrib/ports/unix/setup-tapif>
 - <https://backreference.org/2010/03/26/tuntap-interface-tutorial/>
 
-### Cleanup Tun/Tap Interface
+#### Cleanup Tun/Tap Interface
 
 ```bash
 sudo ip tuntap del dev tap0 mode tap
 sudo ip link del lwipbridge
 ```
 
-## Run `example_app`
+### Run `example_app`
 
 ```bash
 # Assume the current directory is `build`
@@ -74,7 +78,11 @@ status_callback==UP, local interface IP is 192.168.1.200
 
 Then, open the browser and enter [192.168.1.200](http://192.168.1.200)
 
-## Build `lwip_preload` Hook Library
+## `lwip_preload` Hook Library
+
+### Build `lwip_preload`
+
+By default, we use the raw socket interafce for the low-level communication. To use the tap device interface provided by lwip, please modify [contrib/ports/unix/preload_lib/lwipopts.h](contrib/ports/unix/preload_lib/lwipopts.h) to set `LWIP_RAWIF` to 0.
 
 ```bash
 cd contrib/ports/unix/preload_lib
@@ -86,13 +94,14 @@ make
 
 ### Run Programs
 
-```bash
-# IP: 192.168.1.200
-PRECONFIGURED_TAPIF=tap0 LD_PRELOAD=liblwip_preload.so <your program>
+The program will automatically configure MAC and IP addresses, based on the provided interface.
 
-# IP: 192.168.1.201
-# need to add tap1
-IS_IP2=1 PRECONFIGURED_TAPIF=tap1 LD_PRELOAD=liblwip_preload.so <your program>
+```bash
+# use default "eth0" interaface
+LD_PRELOAD=liblwip_preload.so <your program>
+
+# use other interface
+PRECONFIGURED_RAWIF=<network interafce> LD_PRELOAD=liblwip_preload.so <your program>
 ```
 
 ### Communication between Two Tap Devices
@@ -111,6 +120,11 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
     sudo ip link set tap1 master lwipbridge
     sudo ip addr add 192.168.1.1/24 dev lwipbridge
     sudo ip link set dev lwipbridge up
+
+    # clean up
+    sudo ip tuntap del dev tap0 mode tap
+    sudo ip tuntap del dev tap1 mode tap
+    sudo ip link del lwipbridge
     ```
 
 2. Add IP addresses for two tap devices. This step is important; otherwise, the kernel is not aware of the correct routing of received packets.
@@ -123,8 +137,10 @@ Examles: `udp_client` and `udp_server` in [h1994st/SecEthernetDev](https://githu
 3. Run `udp_client` and `udp_server`
 
     ```bash
+    # 192.168.1.200
     PRECONFIGURED_TAPIF=tap0 LD_PRELOAD=/path/to/liblwip_preload.so ./udp_server
 
+    # 192.168.1.201
     IS_IP2=1 PRECONFIGURED_TAPIF=tap1 LD_PRELOAD=/path/to/liblwip_preload.so ./udp_client -b /path/to/can_frames.pcap
     ```
 

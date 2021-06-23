@@ -23,7 +23,12 @@
 #include "lwip/dns.h"
 
 #include "lwip/ip_addr.h"
+#if LWIP_RAWIF
+#include "netif/rawif.h"
+#else
 #include "netif/tapif.h"
+#endif /* LWIP_RAWIF */
+
 #if defined(EIPS) && EIPS == 1
 #include "ipsec/ipsecdev.h"
 #endif /* defined(EIPS) && EIPS == 1 */
@@ -62,7 +67,11 @@ static struct netif netif;
 
 static void init_default_netif(const ip4_addr_t *ipaddr, const ip4_addr_t *netmask, const ip4_addr_t *gw)
 {
+#if LWIP_RAWIF
+  netif_add(&netif, ipaddr, netmask, gw, NULL, rawif_init, tcpip_input);
+#else
   netif_add(&netif, ipaddr, netmask, gw, NULL, tapif_init, tcpip_input);
+#endif /* LWIP_RAWIF */
 
 #if defined(EIPS) && EIPS == 1
   ipsecdev_add(&netif);
@@ -107,13 +116,15 @@ link_callback(struct netif *state_netif)
 static void
 preload_netif_init(void)
 {
+#if LWIP_RAWIF == 0
 #if LWIP_IPV4 && USE_ETHERNET
   ip4_addr_t ipaddr, netmask, gw;
 #endif /* LWIP_IPV4 && USE_ETHERNET */
-
   char *is_ip2 = getenv("IS_IP2");
+#endif /* LWIP_RAWIF == 0 */
 
 #if USE_ETHERNET
+#if LWIP_RAWIF == 0
 #if LWIP_IPV4
   ip4_addr_set_zero(&gw);
   ip4_addr_set_zero(&ipaddr);
@@ -137,6 +148,10 @@ preload_netif_init(void)
 #else
   init_default_netif();
 #endif
+#else
+  init_default_netif(NULL, NULL, NULL);
+#endif /* LWIP_RAWIF == 0 */
+
 #if LWIP_NETIF_STATUS_CALLBACK
   netif_set_status_callback(netif_default, status_callback);
 #endif /* LWIP_NETIF_STATUS_CALLBACK */

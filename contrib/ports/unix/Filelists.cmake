@@ -19,6 +19,7 @@ set(lwipcontribportunix_SRCS
 
 set(lwipcontribportunixnetifs_SRCS
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/tapif.c
+    ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/rawif.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/list.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/sio.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/fifo.c

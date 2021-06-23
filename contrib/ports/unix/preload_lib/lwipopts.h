@@ -42,6 +42,11 @@ typedef unsigned short int sa_family_t;
 #endif /* LWIP_GK_ROLE */
 #endif /* LWIP_GATEKEEPER == 1 */
 
+/* Raw socket interface */
+#ifndef LWIP_RAWIF
+#define LWIP_RAWIF 1
+#endif /* LWIP_RAWIF */
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  0
 
