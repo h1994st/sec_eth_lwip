@@ -94,11 +94,11 @@ make
 
 References about raw socket and its configurations:
 
-- https://iplab.naist.jp/class/2018/materials/hands-on/layer-2-raw-socket/
-- https://gist.github.com/austinmarton/1922600
-- https://gist.github.com/austinmarton/2862515
-- https://github.com/h1994st/raw-socket-tutorial/blob/master/raw_socket_icmp_ping.c
-- https://man7.org/linux/man-pages/man7/netdevice.7.html
+- <https://iplab.naist.jp/class/2018/materials/hands-on/layer-2-raw-socket/>
+- <https://gist.github.com/austinmarton/1922600>
+- <https://gist.github.com/austinmarton/2862515>
+- <https://github.com/h1994st/raw-socket-tutorial/blob/master/raw_socket_icmp_ping.c>
+- <https://man7.org/linux/man-pages/man7/netdevice.7.html>
 
 ### Run Programs
 
