@@ -3025,6 +3025,11 @@ lwip_getsockopt_impl(int s, int level, int optname, void *optval, socklen_t *opt
           *(int *)optval = netconn_get_recvbufsize(sock->conn);
           break;
 #endif /* LWIP_SO_RCVBUF */
+        case SO_SNDBUF: /* temporary solution: always return RCVBUF */
+          LWIP_SOCKOPT_CHECK_OPTLEN_CONN(sock, *optlen, int);
+          /* TODO: need to support SO_SNDBUF in the future */
+          *(int *)optval = netconn_get_recvbufsize(sock->conn);
+          break;
 #if LWIP_SO_LINGER
         case SO_LINGER: {
           s16_t conn_linger;
@@ -3132,11 +3137,19 @@ lwip_getsockopt_impl(int s, int level, int optname, void *optval, socklen_t *opt
           LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_getsockopt(%d, IPPROTO_TCP, TCP_NODELAY) = %s\n",
                                       s, (*(int *)optval) ? "on" : "off") );
           break;
+#if defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0
+        case TCP_MAXSEG:
+          *(int *)optval = (int)sock->conn->pcb.tcp->mss;
+          LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_getsockopt(%d, IPPROTO_TCP, TCP_MAXSEG) = %d\n",
+                                      s, *(int *)optval));
+          break;
+#else /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
         case TCP_KEEPALIVE:
           *(int *)optval = (int)sock->conn->pcb.tcp->keep_idle;
           LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_getsockopt(%d, IPPROTO_TCP, TCP_KEEPALIVE) = %d\n",
                                       s, *(int *)optval));
           break;
+#endif /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
 
 #if LWIP_TCP_KEEPALIVE
         case TCP_KEEPIDLE:
@@ -3609,11 +3622,13 @@ lwip_setsockopt_impl(int s, int level, int optname, const void *optval, socklen_
           LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_setsockopt(%d, IPPROTO_TCP, TCP_NODELAY) -> %s\n",
                                       s, (*(const int *)optval) ? "on" : "off") );
           break;
+#if !defined(LWIP_COMPAT_SOCKETS) || LWIP_COMPAT_SOCKETS != 0
         case TCP_KEEPALIVE:
           sock->conn->pcb.tcp->keep_idle = (u32_t)(*(const int *)optval);
           LWIP_DEBUGF(SOCKETS_DEBUG, ("lwip_setsockopt(%d, IPPROTO_TCP, TCP_KEEPALIVE) -> %"U32_F"\n",
                                       s, sock->conn->pcb.tcp->keep_idle));
           break;
+#endif /* !defined(LWIP_COMPAT_SOCKETS) || LWIP_COMPAT_SOCKETS != 0 */
 
 #if LWIP_TCP_KEEPALIVE
         case TCP_KEEPIDLE:

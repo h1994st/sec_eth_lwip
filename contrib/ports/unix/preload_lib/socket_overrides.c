@@ -191,6 +191,7 @@ int getsockname(int s, struct sockaddr *name, socklen_t *namelen) {
 
 int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen) {
     if (lwip_sock_inited && s > LWIP_FD_BASE) {
+        LWIP_FD_DEBUG("lwip getsockopt sock=%d level=%d optname=%d\n", s, level, optname);
         s -= LWIP_FD_BASE;
         return lwip_getsockopt(s, level, optname, optval, optlen);
     } else {
@@ -199,13 +200,10 @@ int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen) {
 }
 
 int setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen) {
-    int ret;
     if (lwip_sock_inited && s > LWIP_FD_BASE) {
         LWIP_FD_DEBUG("lwip setsockopt sock=%d level=%d optname=%d optlen=%d\n", s, level, optname, (int)optlen);
         s -= LWIP_FD_BASE;
-        ret = lwip_setsockopt(s, level, optname, optval, optlen);
-        LWIP_FD_DEBUG("lwip setsockopt ret=%d\n", ret);
-        return ret;
+        return lwip_setsockopt(s, level, optname, optval, optlen);
     } else {
         return real_setsockopt(s, level, optname, optval, optlen);
     }

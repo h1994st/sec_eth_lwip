@@ -327,11 +327,54 @@ struct linger {
 /*
  * Options for level IPPROTO_TCP
  */
+#if defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0
+/* for compatiability!!! stolen from <netinet/tcp.h> */
+/*
+ * User-settable options (used with setsockopt).
+ */
+#define	TCP_NODELAY		 1  /* Don't delay send to coalesce packets  */
+#define	TCP_MAXSEG		 2  /* Set maximum segment size  */
+#define TCP_CORK		 3  /* Control sending of partial frames  */
+#define TCP_KEEPIDLE		 4  /* Start keeplives after this period */
+#define TCP_KEEPINTVL		 5  /* Interval between keepalives */
+#define TCP_KEEPCNT		 6  /* Number of keepalives before death */
+#define TCP_SYNCNT		 7  /* Number of SYN retransmits */
+#define TCP_LINGER2		 8  /* Life time of orphaned FIN-WAIT-2 state */
+#define TCP_DEFER_ACCEPT	 9  /* Wake up listener only when data arrive */
+#define TCP_WINDOW_CLAMP	 10 /* Bound advertised window */
+#define TCP_INFO		 11 /* Information about this connection. */
+#define	TCP_QUICKACK		 12 /* Bock/reenable quick ACKs.  */
+#define TCP_CONGESTION		 13 /* Congestion control algorithm.  */
+#define TCP_MD5SIG		 14 /* TCP MD5 Signature (RFC2385) */
+#define TCP_COOKIE_TRANSACTIONS	 15 /* TCP Cookie Transactions */
+#define TCP_THIN_LINEAR_TIMEOUTS 16 /* Use linear timeouts for thin streams*/
+#define TCP_THIN_DUPACK		 17 /* Fast retrans. after 1 dupack */
+#define TCP_USER_TIMEOUT	 18 /* How long for loss retry before timeout */
+#define TCP_REPAIR		 19 /* TCP sock is under repair right now */
+#define TCP_REPAIR_QUEUE	 20 /* Set TCP queue to repair */
+#define TCP_QUEUE_SEQ		 21 /* Set sequence number of repaired queue. */
+#define TCP_REPAIR_OPTIONS	 22 /* Repair TCP connection options */
+#define TCP_FASTOPEN		 23 /* Enable FastOpen on listeners */
+#define TCP_TIMESTAMP		 24 /* TCP time stamp */
+#define TCP_NOTSENT_LOWAT	 25 /* Limit number of unsent bytes in
+				       write queue.  */
+#define TCP_CC_INFO		 26 /* Get Congestion Control
+				       (optional) info.  */
+#define TCP_SAVE_SYN		 27 /* Record SYN headers for new
+				       connections.  */
+#define TCP_SAVED_SYN		 28 /* Get SYN headers recorded for
+				       connection.  */
+#define TCP_REPAIR_WINDOW	 29 /* Get/set window parameters.  */
+#define TCP_FASTOPEN_CONNECT	 30 /* Attempt FastOpen with connect.  */
+#define TCP_ULP			 31 /* Attach a ULP to a TCP connection.  */
+#define TCP_MD5SIG_EXT		 32 /* TCP MD5 Signature with extensions.  */
+#else /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
 #define TCP_NODELAY    0x01    /* don't delay send to coalesce packets */
 #define TCP_KEEPALIVE  0x02    /* send KEEPALIVE probes when idle for pcb->keep_idle milliseconds */
 #define TCP_KEEPIDLE   0x03    /* set pcb->keep_idle  - Same as TCP_KEEPALIVE, but use seconds for get/setsockopt */
 #define TCP_KEEPINTVL  0x04    /* set pcb->keep_intvl - Use seconds for get/setsockopt */
 #define TCP_KEEPCNT    0x05    /* set pcb->keep_cnt   - Use number of probes sent for get/setsockopt */
+#endif /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
 #endif /* LWIP_TCP */
 
 #if LWIP_IPV6
