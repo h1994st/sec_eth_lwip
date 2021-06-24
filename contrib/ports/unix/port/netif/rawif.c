@@ -141,6 +141,10 @@ low_level_init(struct netif *netif)
       exit(1);
     }
     memcpy(&ipaddr, &(((struct sockaddr_in*)&ifr.ifr_addr)->sin_addr), sizeof(ipaddr));
+    /* !!! shift the IP address by 5 */
+    /* The IP address of lwip netif cannot be the same as the underlying Ethernet device;
+     * otherwise, the kernel will handle TCP handshake by itself, leading to TCP RST. */
+    memset(((uint8_t*)&ipaddr) + sizeof(ipaddr) - 1, ip4_addr4_val(ipaddr) + 5, 1);
     /* assume gateway address is the same, except for the last byte */
     memcpy(&gw, &ipaddr, sizeof(ipaddr));
     memset(((uint8_t*)&gw) + sizeof(gw) - 1, 1, 1);

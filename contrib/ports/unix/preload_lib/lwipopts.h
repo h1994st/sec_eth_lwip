@@ -20,6 +20,7 @@ typedef unsigned short int sa_family_t;
 #define LWIP_SOCKET_OFFSET         3
 /* Avoid pbuf chain */
 #define LWIP_NETIF_TX_SINGLE_PBUF 1
+#define SO_REUSE 1 /* Enable SO_REUSEADDR option */
 
 /* IPsec */
 #ifndef EIPS

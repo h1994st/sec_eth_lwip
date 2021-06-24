@@ -1607,6 +1607,10 @@ tcp_output_segment(struct tcp_seg *seg, struct tcp_pcb *pcb, struct netif *netif
 #endif /* CHECKSUM_GEN_TCP */
   TCP_STATS_INC(tcp.xmit);
 
+#if TCP_OUTPUT_DEBUG
+  tcp_debug_print(seg->tcphdr);
+#endif
+
   NETIF_SET_HINTS(netif, &(pcb->netif_hints));
   err = ip_output_if(seg->p, &pcb->local_ip, &pcb->remote_ip, pcb->ttl,
                      pcb->tos, IP_PROTO_TCP, netif);
@@ -2036,7 +2040,7 @@ tcp_rst(const struct tcp_pcb *pcb, u32_t seqno, u32_t ackno,
         u16_t local_port, u16_t remote_port)
 {
   struct pbuf *p;
-  
+
   p = tcp_rst_common(pcb, seqno, ackno, local_ip, remote_ip, local_port, remote_port);
   if (p != NULL) {
     tcp_output_control_segment(pcb, p, local_ip, remote_ip);
