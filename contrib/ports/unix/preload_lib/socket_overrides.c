@@ -24,12 +24,13 @@
  *  LWIP socket fd large than linux "ulimit -n " value
  *
 */
-#define LWIP_FD_BASE 800
+#define LWIP_FD_BASE (FD_SETSIZE / 2)
+#define LWIP_FD_SET_HALF (LWIP_FD_BASE / NFDBITS)
 
 /* 1: redis socket will go through ANS stack, 0: go through linux stack */
 int lwip_sock_enable = 1;
 
-int lwipfd_debug_flag = 1;
+int lwipfd_debug_flag = 0;
 
 #define LWIP_FD_DEBUG(args...)  \
   do {  \
@@ -315,30 +316,44 @@ int socket(int domain, int type, int protocol) {
 
 #if LWIP_SOCKET_SELECT
 int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset, struct timeval *timeout) {
-    int i;
     fd_set read_set, write_set, except_set;
+    int ret;
 
     if (maxfdp1 - 1 <= LWIP_FD_BASE) {
         return real_select(maxfdp1, readset, writeset, exceptset, timeout);
     }
 
-    /* likely, users is polling lwip sockets */
+    /* likely, users is polling lwip sockets. then, shift fd_set */
     FD_ZERO(&read_set);
     FD_ZERO(&write_set);
     FD_ZERO(&except_set);
-    for (i = LWIP_SOCKET_OFFSET; i < LWIP_SOCKET_OFFSET + lwip_num_socks; ++i) {
-        if (readset && FD_ISSET(i + LWIP_FD_BASE, readset)) {
-            FD_SET(i, &read_set);
-        }
-        if (writeset && FD_ISSET(i + LWIP_FD_BASE, writeset)) {
-            FD_SET(i, &write_set);
-        }
-        if (exceptset && FD_ISSET(i + LWIP_FD_BASE, exceptset)) {
-            FD_SET(i, &except_set);
-        }
+    if (readset) {
+        memcpy(&read_set, ((fd_mask*)readset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
+    }
+    if (writeset) {
+        memcpy(&write_set, ((fd_mask*)writeset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
+    }
+    if (exceptset) {
+        memcpy(&except_set, ((fd_mask*)exceptset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
     }
 
-    return lwip_select(maxfdp1 - LWIP_FD_BASE, &read_set, &write_set, &except_set, timeout);
+    ret = lwip_select(maxfdp1 - LWIP_FD_BASE, &read_set, &write_set, &except_set, timeout);
+
+    /* copy fd_set back */
+    if (readset) {
+        FD_ZERO(readset);
+        memcpy(((fd_mask*)readset) + LWIP_FD_SET_HALF, &read_set, LWIP_FD_SET_HALF);
+    }
+    if (writeset) {
+        FD_ZERO(writeset);
+        memcpy(((fd_mask*)writeset) + LWIP_FD_SET_HALF, &write_set, LWIP_FD_SET_HALF);
+    }
+    if (exceptset) {
+        FD_ZERO(exceptset);
+        memcpy(((fd_mask*)exceptset) + LWIP_FD_SET_HALF, &except_set, LWIP_FD_SET_HALF);
+    }
+
+    return ret;
 }
 #endif
 
