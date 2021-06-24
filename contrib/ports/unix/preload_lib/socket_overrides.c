@@ -447,11 +447,11 @@ int close(int s) {
 
 int fcntl(int s, int cmd, int val) {
     if (lwip_sock_inited && s > LWIP_FD_BASE) {
-        LWIP_FD_DEBUG("lwip fcntl sock=%d\n", s);
+        LWIP_FD_DEBUG("lwip fcntl sock=%d cmd=%d val=%d\n", s, cmd, val);
         s -= LWIP_FD_BASE;
         return lwip_fcntl(s, cmd, val);
     } else {
-        LWIP_FD_DEBUG("linux fcntl sock=%d\n", s);
+        LWIP_FD_DEBUG("linux fcntl sock=%d cmd=%d val=%d\n", s, cmd, val);
         return real_fcntl(s, cmd, val);
     }
 }

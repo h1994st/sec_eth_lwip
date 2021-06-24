@@ -534,6 +534,24 @@ typedef struct ipv6_mreq {
 
 /* File status flags and file access modes for fnctl,
    these are bits in an int. */
+#if defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0
+/* compatibility !!!!! why not use the same value as Linux macros */
+#ifndef O_NONBLOCK
+#define O_NONBLOCK  04000 /* nonblocking I/O */
+#endif
+#ifndef O_NDELAY
+#define O_NDELAY    O_NONBLOCK /* same as O_NONBLOCK, for compatibility */
+#endif
+#ifndef O_RDONLY
+#define O_RDONLY    00
+#endif
+#ifndef O_WRONLY
+#define O_WRONLY    01
+#endif
+#ifndef O_RDWR
+#define O_RDWR      02
+#endif
+#else
 #ifndef O_NONBLOCK
 #define O_NONBLOCK  1 /* nonblocking I/O */
 #endif
@@ -549,6 +567,7 @@ typedef struct ipv6_mreq {
 #ifndef O_RDWR
 #define O_RDWR      (O_RDONLY|O_WRONLY)
 #endif
+#endif /* defined(LWIP_COMPAT_SOCKETS) && LWIP_COMPAT_SOCKETS == 0 */
 
 #ifndef SHUT_RD
   #define SHUT_RD   0
