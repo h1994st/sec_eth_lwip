@@ -24,8 +24,11 @@
  *  LWIP socket fd large than linux "ulimit -n " value
  *
 */
+/*
 #define LWIP_FD_BASE (FD_SETSIZE / 2)
 #define LWIP_FD_SET_HALF (LWIP_FD_BASE / NFDBITS)
+ */
+#define LWIP_FD_BASE 0
 
 /* 1: redis socket will go through ANS stack, 0: go through linux stack */
 int lwip_sock_enable = 1;
@@ -134,7 +137,7 @@ void lwip_compat_init(void) {
 int accept(int s, struct sockaddr *addr, socklen_t *addrlen) {
     int rc;
 
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
 
         rc = lwip_accept(s, addr, addrlen);
@@ -151,7 +154,7 @@ int accept(int s, struct sockaddr *addr, socklen_t *addrlen) {
 }
 
 int bind(int s, const struct sockaddr *name, socklen_t namelen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         LWIP_FD_DEBUG("lwip bind fd %d\n", s);
         s -= LWIP_FD_BASE;
         return lwip_bind(s, name, namelen);
@@ -164,7 +167,7 @@ int bind(int s, const struct sockaddr *name, socklen_t namelen) {
 int shutdown(int s, int how) {
     LWIP_FD_DEBUG("lwip shutdown fd %d, how %d, pid %d \n", s, how, getpid());
 
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_shutdown(s, how);;
     } else {
@@ -173,7 +176,7 @@ int shutdown(int s, int how) {
 }
 
 int getpeername(int s, struct sockaddr *name, socklen_t *namelen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_getpeername(s, name, namelen);
     } else {
@@ -182,7 +185,7 @@ int getpeername(int s, struct sockaddr *name, socklen_t *namelen) {
 }
 
 int getsockname(int s, struct sockaddr *name, socklen_t *namelen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_getsockname(s, name, namelen);
     } else {
@@ -191,7 +194,7 @@ int getsockname(int s, struct sockaddr *name, socklen_t *namelen) {
 }
 
 int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         LWIP_FD_DEBUG("lwip getsockopt sock=%d level=%d optname=%d\n", s, level, optname);
         s -= LWIP_FD_BASE;
         return lwip_getsockopt(s, level, optname, optval, optlen);
@@ -201,7 +204,7 @@ int getsockopt(int s, int level, int optname, void *optval, socklen_t *optlen) {
 }
 
 int setsockopt(int s, int level, int optname, const void *optval, socklen_t optlen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         LWIP_FD_DEBUG("lwip setsockopt sock=%d level=%d optname=%d optlen=%d\n", s, level, optname, (int)optlen);
         s -= LWIP_FD_BASE;
         return lwip_setsockopt(s, level, optname, optval, optlen);
@@ -211,7 +214,7 @@ int setsockopt(int s, int level, int optname, const void *optval, socklen_t optl
 }
 
 int connect(int s, const struct sockaddr *name, socklen_t namelen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         LWIP_FD_DEBUG("lwip fd(%d) start to connect \n", s);
         return lwip_connect(s, name, namelen);
@@ -222,7 +225,7 @@ int connect(int s, const struct sockaddr *name, socklen_t namelen) {
 }
 
 int listen(int s, int backlog) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
 
         LWIP_FD_DEBUG("lwip listen fd %d, pid %d \n", s, getpid());
@@ -236,7 +239,7 @@ int listen(int s, int backlog) {
 }
 
 ssize_t recv(int s, void *mem, size_t len, int flags) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_recv(s, mem, len, flags);
     } else {
@@ -245,7 +248,7 @@ ssize_t recv(int s, void *mem, size_t len, int flags) {
 }
 
 ssize_t recvfrom(int s, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_recvfrom(s, mem, len, flags, from, fromlen);
     } else {
@@ -254,7 +257,7 @@ ssize_t recvfrom(int s, void *mem, size_t len, int flags, struct sockaddr *from,
 }
 
 ssize_t recvmsg(int s, struct msghdr *message, int flags) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_recvmsg(s, message, flags);
     } else {
@@ -263,7 +266,7 @@ ssize_t recvmsg(int s, struct msghdr *message, int flags) {
 }
 
 ssize_t send(int s, const void *dataptr, size_t size, int flags) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_send(s, dataptr, size, flags);
     } else {
@@ -272,7 +275,7 @@ ssize_t send(int s, const void *dataptr, size_t size, int flags) {
 }
 
 ssize_t sendmsg(int s, const struct msghdr *message, int flags) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_sendmsg(s, message, flags);
     } else {
@@ -281,7 +284,7 @@ ssize_t sendmsg(int s, const struct msghdr *message, int flags) {
 }
 
 ssize_t sendto(int s, const void *dataptr, size_t size, int flags, const struct sockaddr *to, socklen_t tolen) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_sendto(s, dataptr, size, flags, to, tolen);
     } else {
@@ -316,44 +319,11 @@ int socket(int domain, int type, int protocol) {
 
 #if LWIP_SOCKET_SELECT
 int select(int maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset, struct timeval *timeout) {
-    fd_set read_set, write_set, except_set;
-    int ret;
-
-    if (maxfdp1 - 1 <= LWIP_FD_BASE) {
+    if (maxfdp1 - 1 < LWIP_SOCKET_OFFSET) {
         return real_select(maxfdp1, readset, writeset, exceptset, timeout);
     }
 
-    /* likely, users is polling lwip sockets. then, shift fd_set */
-    FD_ZERO(&read_set);
-    FD_ZERO(&write_set);
-    FD_ZERO(&except_set);
-    if (readset) {
-        memcpy(&read_set, ((fd_mask*)readset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
-    }
-    if (writeset) {
-        memcpy(&write_set, ((fd_mask*)writeset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
-    }
-    if (exceptset) {
-        memcpy(&except_set, ((fd_mask*)exceptset) + LWIP_FD_SET_HALF, LWIP_FD_SET_HALF);
-    }
-
-    ret = lwip_select(maxfdp1 - LWIP_FD_BASE, &read_set, &write_set, &except_set, timeout);
-
-    /* copy fd_set back */
-    if (readset) {
-        FD_ZERO(readset);
-        memcpy(((fd_mask*)readset) + LWIP_FD_SET_HALF, &read_set, LWIP_FD_SET_HALF);
-    }
-    if (writeset) {
-        FD_ZERO(writeset);
-        memcpy(((fd_mask*)writeset) + LWIP_FD_SET_HALF, &write_set, LWIP_FD_SET_HALF);
-    }
-    if (exceptset) {
-        FD_ZERO(exceptset);
-        memcpy(((fd_mask*)exceptset) + LWIP_FD_SET_HALF, &except_set, LWIP_FD_SET_HALF);
-    }
-
-    return ret;
+    return lwip_select(maxfdp1, readset, writeset, exceptset, timeout);
 }
 #endif
 
@@ -400,7 +370,7 @@ int inet_pton(int af, const char *src, void *dst) {
 
 #if LWIP_POSIX_SOCKETS_IO_NAMES
 ssize_t read(int s, void *mem, size_t len) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_read(s, mem, len);
     } else {
@@ -409,7 +379,7 @@ ssize_t read(int s, void *mem, size_t len) {
 }
 
 ssize_t readv(int s, const struct iovec *iov, int iovcnt) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_readv(s, iov, iovcnt);
     } else {
@@ -418,7 +388,7 @@ ssize_t readv(int s, const struct iovec *iov, int iovcnt) {
 }
 
 ssize_t write(int s, const void *dataptr, size_t size) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_write(s, dataptr, size);
     } else {
@@ -427,7 +397,7 @@ ssize_t write(int s, const void *dataptr, size_t size) {
 }
 
 ssize_t writev(int s, const struct iovec *iov, int iovcnt) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         return lwip_writev(s, iov, iovcnt);
     } else {
@@ -436,7 +406,7 @@ ssize_t writev(int s, const struct iovec *iov, int iovcnt) {
 }
 
 int close(int s) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         s -= LWIP_FD_BASE;
         --lwip_num_socks;
         return lwip_close(s);
@@ -446,7 +416,7 @@ int close(int s) {
 }
 
 int fcntl(int s, int cmd, int val) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         LWIP_FD_DEBUG("lwip fcntl sock=%d cmd=%d val=%d\n", s, cmd, val);
         s -= LWIP_FD_BASE;
         return lwip_fcntl(s, cmd, val);
@@ -457,7 +427,7 @@ int fcntl(int s, int cmd, int val) {
 }
 
 int ioctl(int s, unsigned long int cmd, void *argp) {
-    if (lwip_sock_inited && s > LWIP_FD_BASE) {
+    if (lwip_sock_inited && s >= LWIP_SOCKET_OFFSET) {
         LWIP_FD_DEBUG("lwip ioctl sock=%d\n", s);
         s -= LWIP_FD_BASE;
         return lwip_ioctl(s, (long)cmd, argp);

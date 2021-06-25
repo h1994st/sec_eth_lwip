@@ -17,7 +17,7 @@
 
 typedef unsigned short int sa_family_t;
 #define SA_FAMILY_T_DEFINED
-#define LWIP_SOCKET_OFFSET         3
+#define LWIP_SOCKET_OFFSET         7
 /* Avoid pbuf chain */
 #define LWIP_NETIF_TX_SINGLE_PBUF 1
 #define SO_REUSE 1 /* Enable SO_REUSEADDR option */
@@ -45,7 +45,7 @@ typedef unsigned short int sa_family_t;
 
 /* Raw socket interface */
 #ifndef LWIP_RAWIF
-#define LWIP_RAWIF 1
+#define LWIP_RAWIF 0
 #endif /* LWIP_RAWIF */
 
 #define LWIP_IPV4                  1
