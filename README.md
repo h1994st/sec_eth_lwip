@@ -1,6 +1,6 @@
 # lwip for Secure Ethernet
 
-This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/blob/7ec4e9be304e7f8953740f10b2c810a292e89449)
+This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/tree/7ec4e9be304e7f8953740f10b2c810a292e89449)
 
 ## Example application
 
