@@ -1,6 +1,9 @@
 # lwip for Secure Ethernet
 
-This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/tree/7ec4e9be304e7f8953740f10b2c810a292e89449)
+- This is a fork of [lwip-tcpip/lwip@7ec4e9b](https://github.com/lwip-tcpip/lwip/tree/7ec4e9be304e7f8953740f10b2c810a292e89449)
+- The IPsec part is ported from
+    - [owenlwebb/lwip-eips](https://github.com/owenlwebb/lwip-eips) --> [h1994st/lwip-eips](https://github.com/h1994st/lwip-eips)
+    - which is originally implemented by [tinytux/embeddedipsec](https://github.com/tinytux/embeddedipsec)
 
 ## Example application
 
